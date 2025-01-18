@@ -9,6 +9,8 @@ type StoreTypes = {
   setIsLoading?: React.Dispatch<React.SetStateAction<boolean>>; // Correct type for setIsLoading
   setUser?: React.Dispatch<React.SetStateAction<userData | undefined>>; // Correct type for setUser
   error: string;
+  page:string;
+  setPage:React.Dispatch<React.SetStateAction<string>>
 };
 
 export type userData = {
@@ -27,6 +29,7 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [user, setUser] = useState<userData | undefined>(undefined); // Correct type for user state
   const [error, setError] = useState<string>("");
+  const [page, setPage] = useState<string>("Welcome");
 
   const checkAuth = useCallback(async () => {
     try {
@@ -61,7 +64,7 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
         setIsLoading,
         user,
         setUser,
-        error
+        error,page, setPage
       }}
     >
       {children}

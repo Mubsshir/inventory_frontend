@@ -43,7 +43,7 @@ export const authenticateUser = async (
         Cookies.set("token", data.token || "");
       }
 
-      return data;
+      return {status:'success',message:data.message,userData:data.user};
     } else {
       return { status: "401", message: "Unauthorized, Please login again." };
     }

@@ -41,23 +41,22 @@ const Login = () => {
   if (!context) {
     return <p>Loading....</p>;
   }
-  const { setIsAuth, setUser,setIsLoading,isLoading } = context;
+  const { setIsAuth, setUser, setIsLoading, isLoading } = context;
   async function onSubmit(values: z.infer<typeof formSchema>) {
-   try{
-    setIsLoading&&setIsLoading(true);
-    const result = await authenticateUser(values.username, values.password);
-    if (result.status == "success") {
-      console.log(result.userData);
+    try {
+      setIsLoading && setIsLoading(true);
+      const result = await authenticateUser(values.username, values.password);
+      if (result.status == "success") {
+        setIsAuth && setIsAuth(true);
+        setUser && setUser(result.userData);
+        navigate("/");
+      }
+      setIsLoading && setIsLoading(false);
+      return;
+    } catch (err) {
+      setIsLoading && setIsLoading(false);
       setIsAuth && setIsAuth(true);
-      setUser && setUser(result.userData);
-      navigate("/");
     }
-    setIsLoading&&setIsLoading(false);
-    return;
-   }catch(err){
-    setIsLoading&&setIsLoading(false);
-    setIsAuth && setIsAuth(true);
-   }
   }
 
   return (
@@ -101,7 +100,11 @@ const Login = () => {
                     </FormItem>
                   )}
                 />
-                <Button className={`disabled:cursor-wait  bg-red-500 w-full  `} type="submit" disabled={isLoading}>
+                <Button
+                  className={`disabled:cursor-wait  bg-red-500 w-full  `}
+                  type="submit"
+                  disabled={isLoading}
+                >
                   Login
                 </Button>
               </form>

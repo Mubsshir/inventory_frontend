@@ -5,6 +5,7 @@ import Home from "./components/pages/Home";
 import { Store } from "./store/Store";
 import { useContext } from "react";
 import Loading from "./components/ui/Loading";
+import Dashboard from "./components/pages/Dashboard";
 
 function App() {
   const context = useContext(Store);
@@ -12,7 +13,7 @@ function App() {
     return <Loading />;
   }
 
-  const { isAuth,isLoading } = context;
+  const { isAuth, isLoading } = context;
   if (isLoading) {
     return <Loading />;
   }
@@ -31,7 +32,15 @@ function App() {
           path="dashboard"
           element={
             <ProtectedRoute>
-              <Home />
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+         <Route
+          path="consumers"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
             </ProtectedRoute>
           }
         />
