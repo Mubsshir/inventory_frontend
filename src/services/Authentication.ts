@@ -2,13 +2,7 @@
 const BACK_API: string = import.meta.env.VITE_LOCAL_URL; // URL of backend
 import { userData } from "@/store/Store";
 import Cookies from "js-cookie";
-
-// You can define a helper function to get the headers, assuming it's required in multiple places
-const getHeaders = (): Record<string, string> => {
-  return {
-    Authorization: `Bearer ${Cookies.get("token") || ""}`,
-  };
-};
+import { getHeaders } from "./getHeader";
 
 // Define the types for the responses and data structures you'll be working with
 
@@ -43,6 +37,7 @@ export const authenticateUser = async (
         Cookies.set("token", data.token || "");
       }
 
+    
       return {status:'success',message:data.message,userData:data.user};
     } else {
       return { status: "401", message: "Unauthorized, Please login again." };
@@ -65,7 +60,8 @@ export const isUserAuthorized = async (): Promise<AuthResponse> => {
     }
 
     if (res.ok) {
-      return await res.json();
+      const data= await res.json();
+      return {status:'success',message:"Authorization Success" ,userData:data.user}
     } else {
       return { status: "error", message: "Something went wrong" };
     }

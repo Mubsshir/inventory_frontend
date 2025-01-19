@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { isUserAuthorized } from "@/services/Authentication";
+import { getConsumerList } from "@/services/Customers";
 
 type StoreTypes = {
   isAuth?: boolean;
@@ -8,9 +9,10 @@ type StoreTypes = {
   isLoading?: boolean;
   setIsLoading?: React.Dispatch<React.SetStateAction<boolean>>; // Correct type for setIsLoading
   setUser?: React.Dispatch<React.SetStateAction<userData | undefined>>; // Correct type for setUser
+  setCustomers?: React.Dispatch<React.SetStateAction<Customer[] | undefined>>;
+  customers?: Customer[];
   error: string;
-  page:string;
-  setPage:React.Dispatch<React.SetStateAction<string>>
+  fetchConsumer: Function;
 };
 
 export type userData = {
@@ -18,6 +20,14 @@ export type userData = {
   userId: number;
   email: string;
   fullname: string;
+};
+
+export type Customer = {
+  cnsr_id: number;
+  name: string;
+  email: string;
+  mobile: string;
+  address: string;
 };
 
 export const Store = React.createContext<StoreTypes | null>(null);
@@ -29,7 +39,7 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [user, setUser] = useState<userData | undefined>(undefined); // Correct type for user state
   const [error, setError] = useState<string>("");
-  const [page, setPage] = useState<string>("Welcome");
+  const [customers, setCustomers] = useState<Customer[] | undefined>(undefined);
 
   const checkAuth = useCallback(async () => {
     try {
@@ -51,9 +61,31 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, []);
 
+  const fetchConsumer = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const response = await getConsumerList();
+      if (response && response.status === "success") {
+        setCustomers(response.data);
+      } else if (response && response.status === "401") {
+        setError(response.message);
+      }
+      setIsLoading(false);
+    } catch (err: any) {
+      setError(err.message);
+      setIsLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
+
+  useEffect(() => {
+    if (isAuth) {
+      fetchConsumer();
+    }
+  }, [fetchConsumer, isAuth]);
 
   return (
     <Store.Provider
@@ -64,7 +96,10 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
         setIsLoading,
         user,
         setUser,
-        error,page, setPage
+        error,
+        setCustomers,
+        customers,
+        fetchConsumer,
       }}
     >
       {children}

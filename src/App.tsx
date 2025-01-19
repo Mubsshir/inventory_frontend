@@ -6,14 +6,14 @@ import { Store } from "./store/Store";
 import { useContext } from "react";
 import Loading from "./components/ui/Loading";
 import Dashboard from "./components/pages/Dashboard";
-
+import Consumer from "./components/pages/consumer/page";
 function App() {
   const context = useContext(Store);
   if (!context) {
     return <Loading />;
   }
 
-  const { isAuth, isLoading } = context;
+  const { isAuth, isLoading } = context;  
   if (isLoading) {
     return <Loading />;
   }
@@ -28,23 +28,12 @@ function App() {
           </ProtectedRoute>
         }
       >
-        <Route
-          path="dashboard"
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          }
-        />
-         <Route
-          path="consumers"
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          }
-        />
+        <Route index element={<Navigate to="dashboard" />} />
+        {/* Redirect to dashboard */}
+        <Route path="dashboard" element={<Dashboard />} />
+        <Route path="consumers" element={<Consumer />} />
       </Route>
+
       <Route
         path="/login"
         element={isAuth ? <Navigate to={"/"} /> : <Login />}

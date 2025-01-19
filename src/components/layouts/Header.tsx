@@ -4,10 +4,9 @@ import { SidebarTrigger } from "../ui/sidebar";
 
 type HeaderProps = {
   username: string;
-  pagename: string;
 };
 
-const Header: React.FC<HeaderProps> = ({ username, pagename }) => {
+const Header: React.FC<HeaderProps> = ({ username }) => {
   const {pathname} = useLocation()
   console.log(pathname);
   const pageName =
