@@ -66,6 +66,7 @@ const AddConsumer:React.FC<{ closeDialog:Function }> = ({ closeDialog }) => {
       setIsLoading && setIsLoading(false);
 
       const result = await saveConsumer(values);
+      console.log(result)
       if (result && result.status == "success") {
         await fetchConsumer();
         toast({

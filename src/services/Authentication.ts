@@ -29,7 +29,6 @@ export const authenticateUser = async (
       headers: { ...getHeaders(), "Content-type": "application/json" },
       body: JSON.stringify(payload),
     });
-
     if (res.ok) {
       const data = await res.json();
 
@@ -37,8 +36,7 @@ export const authenticateUser = async (
         Cookies.set("token", data.token || "");
       }
 
-    
-      return {status:'success',message:data.message,userData:data.user};
+      return { status: "success", message: data.message, userData: data.user };
     } else {
       return { status: "401", message: "Unauthorized, Please login again." };
     }
@@ -60,8 +58,12 @@ export const isUserAuthorized = async (): Promise<AuthResponse> => {
     }
 
     if (res.ok) {
-      const data= await res.json();
-      return {status:'success',message:"Authorization Success" ,userData:data.user}
+      const data = await res.json();
+      return {
+        status: "success",
+        message: "Authorization Success",
+        userData: data.user,
+      };
     } else {
       return { status: "error", message: "Something went wrong" };
     }

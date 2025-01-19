@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { isUserAuthorized } from "@/services/Authentication";
 import { getConsumerList } from "@/services/Customers";
+import { getBrandCategory } from "@/services/Inventory";
 
 type StoreTypes = {
   isAuth?: boolean;
@@ -13,6 +14,8 @@ type StoreTypes = {
   customers?: Customer[];
   error: string;
   fetchConsumer: Function;
+  brandCategories:Array<object>|undefined;
+  setBrandCategories:React.Dispatch<React.SetStateAction<Array<object>|undefined>>;
 };
 
 export type userData = {
@@ -40,6 +43,7 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
   const [user, setUser] = useState<userData | undefined>(undefined); // Correct type for user state
   const [error, setError] = useState<string>("");
   const [customers, setCustomers] = useState<Customer[] | undefined>(undefined);
+  const [brandCategories,setBrandCategories]=useState <Array<object>|undefined>(undefined);
 
   const checkAuth = useCallback(async () => {
     try {
@@ -77,6 +81,22 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, []);
 
+  const fetchBrandCategory = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const response = await getBrandCategory();
+      if (response && response.status === "success") {
+        setBrandCategories(response.data);
+      } else if (response && response.status === "401") {
+        setError(response.message);
+      }
+      setIsLoading(false);
+    } catch (err: any) {
+      setError(err.message);
+      setIsLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
@@ -84,8 +104,9 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     if (isAuth) {
       fetchConsumer();
+      fetchBrandCategory();
     }
-  }, [fetchConsumer, isAuth]);
+  }, [fetchConsumer,fetchBrandCategory, isAuth]);
 
   return (
     <Store.Provider
@@ -100,6 +121,8 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
         setCustomers,
         customers,
         fetchConsumer,
+        brandCategories,
+        setBrandCategories
       }}
     >
       {children}

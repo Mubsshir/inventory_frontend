@@ -33,11 +33,12 @@ export const saveConsumer = async (
       headers: { ...getHeaders(), "Content-type": "application/json" },
       body: JSON.stringify(cnsrdata),
     });
+
     const data = await res.json();
     if (res.ok) {
       return { status: data.status, data: data.data };
     }
-    return { status: "error", data: undefined, message: "Somthing went wrong" };
+    return { status: "error", data: undefined, message: data.message };
   } catch (err) {
     return { status: "error", data: undefined, message: err };
   }

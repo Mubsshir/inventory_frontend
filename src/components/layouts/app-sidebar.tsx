@@ -1,15 +1,13 @@
 import {
-  Calendar,
   ChartArea,
-  ChartNoAxesColumnDecreasing,
-  Inbox,
+  ChevronRight,
   LibraryBig,
-  LifeBuoyIcon,
   LucideLogOut,
-  Search,
-  Settings,
+  MonitorPlay,
+  SendToBack,
+  StoreIcon,
   UserCircle2,
-  Users2,
+  WarehouseIcon,
 } from "lucide-react";
 
 import {
@@ -23,14 +21,20 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
   useSidebar,
 } from "@/components/ui/sidebar";
 
 import { Store } from "@/store/Store";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { NavLink, useNavigate } from "react-router";
 import Loading from "../ui/Loading";
 import Cookies from "js-cookie";
+import {
+  Collapsible,
+  CollapsibleTrigger,
+  CollapsibleContent,
+} from "@radix-ui/react-collapsible";
 
 // Menu items.
 const items = [
@@ -45,37 +49,45 @@ const items = [
     icon: UserCircle2,
   },
   {
-    title: "Calendar",
-    url: "#",
-    icon: Calendar,
-  },
-  {
-    title: "Search",
-    url: "#",
-    icon: Search,
-  },
-  {
-    title: "Settings",
-    url: "#",
-    icon: Settings,
+    title: "Inventoy",
+    url: "",
+    icon: WarehouseIcon,
+    submenu: [
+      {
+        title: "Brand Categories",
+        url: "/consumers",
+        icon: StoreIcon,
+      },
+      {
+        title: "Brands",
+        url: "/consumers",
+        icon: SendToBack,
+      },
+      {
+        title: "Stocks",
+        url: "/consumers",
+        icon: MonitorPlay,
+      },
+    ],
   },
 ];
 
 export function AppSidebar() {
   const { state, setOpen } = useSidebar();
-  const navigate=useNavigate();
-  const context=useContext(Store);
+  const navigate = useNavigate();
+  const context = useContext(Store);
+  const [isLinkActive, setIsLinkActive] = useState<boolean>();
 
-  if(!context){
-    return <Loading/>
+  if (!context) {
+    return <Loading />;
   }
 
-  const {setIsAuth}=context;
-  const logoutHandler=()=>{
-    navigate('/login')
-    setIsAuth&&setIsAuth(false)
-    Cookies.remove('token')
-  }
+  const { setIsAuth } = context;
+  const logoutHandler = () => {
+    navigate("/login");
+    setIsAuth && setIsAuth(false);
+    Cookies.remove("token");
+  };
 
   return (
     <Sidebar collapsible={"icon"}>
@@ -83,7 +95,8 @@ export function AppSidebar() {
         <div className="flex items-start justify-center  rounded-md py-2">
           <LibraryBig
             size={32}
-            className="cursor-pointe  " color="gray" 
+            className="cursor-pointer"
+            color="gray"
             onClick={() => {
               setOpen(true);
             }}
@@ -101,23 +114,62 @@ export function AppSidebar() {
           <SidebarGroupLabel>Application</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <NavLink to={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {items.map((item) => {
+                if (item.submenu) {
+                  return (
+                    <Collapsible className="group/collapsible">
+                      <SidebarMenuItem>
+                        <CollapsibleTrigger asChild>
+                          <SidebarMenuButton>
+                            {"  "}
+                            <item.icon />
+                            <NavLink to={item.url}>
+                              <span>{item.title}</span>
+                            </NavLink>
+                            <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                          </SidebarMenuButton>
+                        </CollapsibleTrigger>
+                        <CollapsibleContent className="space-y-1 mt-1">
+                          {item.submenu.map((subitem) => (
+                            <SidebarMenuSub>
+                              <NavLink
+                                to={subitem.url}
+                                className={"flex items-center space-x-1 "}
+                              >
+                                <span>{subitem.title}</span>
+                              </NavLink>
+                            </SidebarMenuSub>
+                          ))}
+                        </CollapsibleContent>
+                      </SidebarMenuItem>
+                    </Collapsible>
+                  );
+                }
+                return (
+                  <SidebarMenuItem key={item.title} >
+                    <SidebarMenuButton  isActive={isLinkActive}  asChild>
+                      <NavLink
+                        to={item.url}
+                        className={({  }) => {
+                          setIsLinkActive(true);
+                          return "";
+                        }}
+                      >
+                        <item.icon className="mr-2" />
+                        <span>{item.title}</span>
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenuButton onClick={logoutHandler}>
-          <LucideLogOut color="red" />Logut
+          <LucideLogOut color="red" />
+          Logut
         </SidebarMenuButton>
       </SidebarFooter>
     </Sidebar>
