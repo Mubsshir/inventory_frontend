@@ -14,8 +14,10 @@ type StoreTypes = {
   customers?: Customer[];
   error: string;
   fetchConsumer: Function;
-  brandCategories:Array<object>|undefined;
-  setBrandCategories:React.Dispatch<React.SetStateAction<Array<object>|undefined>>;
+  brandCategories: BrandCategory[] | undefined;
+  setBrandCategories: React.Dispatch<
+    React.SetStateAction<BrandCategory[] | undefined>
+  >;
 };
 
 export type userData = {
@@ -33,6 +35,12 @@ export type Customer = {
   address: string;
 };
 
+export type BrandCategory = {
+  brand_catid: number;
+  category_name: string;
+  image_path: string;
+};
+
 export const Store = React.createContext<StoreTypes | null>(null);
 
 const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
@@ -43,7 +51,9 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
   const [user, setUser] = useState<userData | undefined>(undefined); // Correct type for user state
   const [error, setError] = useState<string>("");
   const [customers, setCustomers] = useState<Customer[] | undefined>(undefined);
-  const [brandCategories,setBrandCategories]=useState <Array<object>|undefined>(undefined);
+  const [brandCategories, setBrandCategories] = useState<
+    BrandCategory[] | undefined
+  >(undefined);
 
   const checkAuth = useCallback(async () => {
     try {
@@ -106,7 +116,7 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
       fetchConsumer();
       fetchBrandCategory();
     }
-  }, [fetchConsumer,fetchBrandCategory, isAuth]);
+  }, [fetchConsumer, fetchBrandCategory, isAuth]);
 
   return (
     <Store.Provider
@@ -122,7 +132,7 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
         customers,
         fetchConsumer,
         brandCategories,
-        setBrandCategories
+        setBrandCategories,
       }}
     >
       {children}

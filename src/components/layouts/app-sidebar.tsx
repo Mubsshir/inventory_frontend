@@ -22,11 +22,12 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSub,
+  SidebarMenuSubItem,
   useSidebar,
 } from "@/components/ui/sidebar";
 
 import { Store } from "@/store/Store";
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { NavLink, useNavigate } from "react-router";
 import Loading from "../ui/Loading";
 import Cookies from "js-cookie";
@@ -50,22 +51,22 @@ const items = [
   },
   {
     title: "Inventoy",
-    url: "",
+    url: "/inventory",
     icon: WarehouseIcon,
     submenu: [
       {
         title: "Brand Categories",
-        url: "/consumers",
+        url: "/bcategory",
         icon: StoreIcon,
       },
       {
         title: "Brands",
-        url: "/consumers",
+        url: "/brands",
         icon: SendToBack,
       },
       {
         title: "Stocks",
-        url: "/consumers",
+        url: "/stocks",
         icon: MonitorPlay,
       },
     ],
@@ -76,7 +77,6 @@ export function AppSidebar() {
   const { state, setOpen } = useSidebar();
   const navigate = useNavigate();
   const context = useContext(Store);
-  const [isLinkActive, setIsLinkActive] = useState<boolean>();
 
   if (!context) {
     return <Loading />;
@@ -117,13 +117,13 @@ export function AppSidebar() {
               {items.map((item) => {
                 if (item.submenu) {
                   return (
-                    <Collapsible className="group/collapsible">
+                    <Collapsible key={item.title} className="group/collapsible">
                       <SidebarMenuItem>
                         <CollapsibleTrigger asChild>
                           <SidebarMenuButton>
                             {"  "}
                             <item.icon />
-                            <NavLink to={item.url}>
+                            <NavLink to={"/"}>
                               <span>{item.title}</span>
                             </NavLink>
                             <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
@@ -131,13 +131,15 @@ export function AppSidebar() {
                         </CollapsibleTrigger>
                         <CollapsibleContent className="space-y-1 mt-1">
                           {item.submenu.map((subitem) => (
-                            <SidebarMenuSub>
-                              <NavLink
-                                to={subitem.url}
-                                className={"flex items-center space-x-1 "}
-                              >
-                                <span>{subitem.title}</span>
-                              </NavLink>
+                            <SidebarMenuSub key={subitem.title}>
+                              <SidebarMenuSubItem>
+                                <NavLink
+                                  to={item.url + subitem.url}
+                                  className={"flex items-center space-x-1 "}
+                                >
+                                  <span>{subitem.title}</span>
+                                </NavLink>
+                              </SidebarMenuSubItem>
                             </SidebarMenuSub>
                           ))}
                         </CollapsibleContent>
@@ -146,15 +148,9 @@ export function AppSidebar() {
                   );
                 }
                 return (
-                  <SidebarMenuItem key={item.title} >
-                    <SidebarMenuButton  isActive={isLinkActive}  asChild>
-                      <NavLink
-                        to={item.url}
-                        className={({  }) => {
-                          setIsLinkActive(true);
-                          return "";
-                        }}
-                      >
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild>
+                      <NavLink to={item.url}>
                         <item.icon className="mr-2" />
                         <span>{item.title}</span>
                       </NavLink>

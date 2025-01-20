@@ -1,10 +1,11 @@
 const BACK_API: string = import.meta.env.VITE_LOCAL_URL; // URL of backend
+import { BrandCategory } from "@/store/Store";
 import { getHeaders } from "./getHeader";
 
 type AuthResponse = {
     status: string;
     message?: string|any;
-    data?: Array<object>;
+    data?: BrandCategory[];
   };
 
 

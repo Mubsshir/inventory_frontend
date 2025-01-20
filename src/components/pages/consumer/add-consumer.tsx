@@ -85,7 +85,8 @@ const AddConsumer:React.FC<{ closeDialog:Function }> = ({ closeDialog }) => {
     } catch (err) {
       closeDialog();
       toast({
-        description:err.message,
+        title:"Error",
+        description:"Somthing went wrong",
       });
       setIsLoading && setIsLoading(false);
     }

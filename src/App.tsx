@@ -7,13 +7,14 @@ import { useContext } from "react";
 import Loading from "./components/ui/Loading";
 import Dashboard from "./components/pages/Dashboard";
 import Consumer from "./components/pages/consumer/page";
+import Inventory from "./components/pages/inventory/page";
 function App() {
   const context = useContext(Store);
   if (!context) {
     return <Loading />;
   }
 
-  const { isAuth, isLoading } = context;  
+  const { isAuth, isLoading } = context;
   if (isLoading) {
     return <Loading />;
   }
@@ -32,6 +33,13 @@ function App() {
         {/* Redirect to dashboard */}
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="consumers" element={<Consumer />} />
+        <Route path="inventory">
+          <Route  element={<Navigate to="/bcategory" />} />{" "}
+          {/* Default sub-route */}
+          <Route path="bcategory" element={<Inventory />} />
+          <Route path="brands" element={<Inventory />} />
+          <Route path="stocks" element={<Inventory />} />
+        </Route>
       </Route>
 
       <Route
