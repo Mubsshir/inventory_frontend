@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { isUserAuthorized } from "@/services/Authentication";
 import { getConsumerList } from "@/services/Customers";
-import { getBrandCategory } from "@/services/Inventory";
+import { getBrandCategory, getBrands } from "@/services/Inventory";
 
 type StoreTypes = {
   isAuth?: boolean;
@@ -18,6 +18,8 @@ type StoreTypes = {
   setBrandCategories: React.Dispatch<
     React.SetStateAction<BrandCategory[] | undefined>
   >;
+  brands: Brand[] | undefined;
+  setBrands: React.Dispatch<React.SetStateAction<Brand[] | undefined>>;
 };
 
 export type userData = {
@@ -41,6 +43,12 @@ export type BrandCategory = {
   image_path: string;
 };
 
+export type Brand = {
+  brand_id: number;
+  brand_name: string;
+  image_path: string;
+};
+
 export const Store = React.createContext<StoreTypes | null>(null);
 
 const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
@@ -54,6 +62,7 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
   const [brandCategories, setBrandCategories] = useState<
     BrandCategory[] | undefined
   >(undefined);
+  const [brands, setBrands] = useState<Brand[] | undefined>(undefined);
 
   const checkAuth = useCallback(async () => {
     try {
@@ -96,7 +105,25 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
       setIsLoading(true);
       const response = await getBrandCategory();
       if (response && response.status === "success") {
-        setBrandCategories(response.data);
+        setBrandCategories(response.data as BrandCategory[]);
+        console.log(response);
+      } else if (response && response.status === "401") {
+        setError(response.message);
+      }
+      setIsLoading(false);
+    } catch (err: any) {
+      setError(err.message);
+      setIsLoading(false);
+    }
+  }, []);
+
+  const fetchBrands = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const response = await getBrands();
+      console.log(response);
+      if (response && response.status === "success") {
+        setBrands(response.data as Brand[]);
       } else if (response && response.status === "401") {
         setError(response.message);
       }
@@ -115,8 +142,9 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
     if (isAuth) {
       fetchConsumer();
       fetchBrandCategory();
+      fetchBrands();
     }
-  }, [fetchConsumer, fetchBrandCategory, isAuth]);
+  }, [fetchConsumer, fetchBrandCategory, fetchBrands, isAuth]);
 
   return (
     <Store.Provider
@@ -133,6 +161,8 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
         fetchConsumer,
         brandCategories,
         setBrandCategories,
+        brands,
+        setBrands,
       }}
     >
       {children}
