@@ -2,43 +2,42 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Loading from "@/components/ui/Loading";
 import { Store } from "@/store/Store";
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 const BACK_API: string = import.meta.env.VITE_LOCAL_URL;
 import { useLocation } from "react-router";
 import { DataTable } from "./data-table";
 import { columns, Item } from "./columns";
-import { getPartList } from "@/services/Inventory";
+
 import { Skeleton } from "@/components/ui/skeleton";
 
 const Inventory = () => {
   const { pathname } = useLocation();
   const context = useContext(Store);
-  const [parts, setParts] = useState<Item[] | undefined>(undefined);
-  const [loading, setLoading] = useState(false);
-  const [catID, setCatID] = useState<Number>(-1);
+
+  const [catID, setCatID] = useState<number>(-1);
+  const [items, setItems] = useState<Item[]>();
 
   if (!context) {
     return <Loading />;
   }
 
-  const fetchParts = useCallback(async (catID: Number) => {
-    try {
-      setLoading(true);
-      const res = await getPartList(catID);
-      setParts(res.data);
-      setLoading(false);
-    } catch (err) {
-      setLoading(false);
-    }
-  }, []);
+  const { brandCategories, brands, isLoading, parts } = context;
 
-  const { brandCategories, brands } = context;
+  const catChangeHandler = (cat_id: number) => {
+    setCatID(cat_id);
+    if (cat_id == -1) {
+      setItems(parts);
+    } else {
+      console.log(parts);
+      setItems(() => {
+        return parts?.filter((part) => part.cat_id == cat_id);
+      });
+    }
+  };
 
   useEffect(() => {
-    if (pathname == "/inventory/stocks") {
-      fetchParts(catID);
-    }
-  }, [catID]);
+    catChangeHandler(catID);
+  }, [parts]);
 
   if (pathname == "/inventory/bcategory") {
     return (
@@ -114,9 +113,7 @@ const Inventory = () => {
                 -1 == catID ? "bg-red-500 text-white" : ""
               } hover:bg-red-500 hover:text-white px-2 py-1 cursor-pointer rounded-sm`}
               key={96548}
-              onClick={() => {
-                setCatID(-1);
-              }}
+              onClick={() => catChangeHandler(-1)}
             >
               All Items
             </li>
@@ -126,21 +123,19 @@ const Inventory = () => {
                   cat.brand_catid == catID ? "bg-red-500 text-white" : ""
                 } hover:bg-red-500 hover:text-white px-2 py-1 cursor-pointer rounded-sm`}
                 key={index}
-                onClick={() => {
-                  setCatID(cat.brand_catid);
-                }}
+                onClick={() => catChangeHandler(cat.brand_catid)}
               >
                 {cat.category_name}
               </li>
             ))}
           </ul>
         </div>
-        {loading ? (
+        {isLoading ? (
           <div className="flex flex-col space-y-3">
             <Skeleton className="h-[360px] w-full rounded-xl" />
           </div>
         ) : (
-          <DataTable columns={columns} data={parts || []} />
+          <DataTable columns={columns} data={items || []} updateRowData={()=>{}} />
         )}
       </div>
     );

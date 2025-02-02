@@ -59,10 +59,31 @@ export const getPartList = async (
     });
     const data = await res.json();
     if (res.ok) {
-      return { status: data.status, data: data.data[1],item_count:data.data[0] };
+      return {
+        status: data.status,
+        data: data.data[1],
+        item_count: data.data[0],
+      };
     }
     console.log(data);
     return { status: "error", data: undefined, message: "Somthing went wrong" };
+  } catch (err) {
+    return { status: "error", data: undefined, message: err };
+  }
+};
+
+export const updatePart = async (
+  item_to_update: object
+): Promise<ItemResponse> => {
+  try {
+    const res = await fetch(BACK_API + "/updateItem", {
+      method: "PUT",
+      headers: { ...getHeaders(), "Content-type": "application/json" },
+      body: JSON.stringify(item_to_update),
+    });
+
+    const data = await res.json();
+    return data
   } catch (err) {
     return { status: "error", data: undefined, message: err };
   }

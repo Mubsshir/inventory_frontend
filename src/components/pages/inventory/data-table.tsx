@@ -21,10 +21,12 @@ import {
 import DataTablePagination from "@/components/ui/table-pagination";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
+import { Item } from "./columns";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
-  data: TData[];
+  data: Item[];
+  updateRowData: (part_id: number, newPrice: number, newQty: number) => void;
 }
 
 export function DataTable<TData, TValue>({
@@ -33,9 +35,19 @@ export function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [tableData, setTableData] = useState<Item[]>(data);
 
+  const updateRowData = (part_id: any, newPrice: any, newQty: any) => {
+    setTableData((prevData) =>
+      prevData.map((item) =>
+        item.part_id == part_id
+          ? { ...item, item_in_stock: newQty, item_price: newPrice }
+          : item
+      )
+    );
+  };
   const table = useReactTable({
-    data,
+    data: tableData as TData[],
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),

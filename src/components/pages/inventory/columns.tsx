@@ -1,9 +1,13 @@
 "use client";
-
 import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Popover, PopoverTrigger, PopoverContent } from "@radix-ui/react-popover";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@radix-ui/react-popover";
+import UpdateItem from "./update-item";
+import { useState } from "react";
 
 export type Item = {
   part_id: number;
@@ -14,10 +18,11 @@ export type Item = {
   item_in_stock: number;
   brand_name: string;
 };
-
+//accessor Key is important to get value in row.getValue(accessorKey)
 export const columns: ColumnDef<Item | any>[] = [
   {
     id: "part_id",
+    accessorKey: "part_id",
     header: ({ table }) => (
       <Checkbox
         checked={
@@ -38,6 +43,10 @@ export const columns: ColumnDef<Item | any>[] = [
     enableSorting: false,
     enableHiding: false,
   },
+  // {
+  //   accessorKey: "cat_id",
+  //   enableHiding: true,
+  // },
   {
     accessorKey: "item_name",
     header: "Item Name",
@@ -59,19 +68,6 @@ export const columns: ColumnDef<Item | any>[] = [
       return <div className="font-medium">{formatted}</div>;
     },
   },
-  // {
-  //   accessorKey: "amount",
-  //   header: () => <div className="text-center">Amount</div>,
-  //   cell: ({ row }) => {
-  //     const amount = parseFloat(row.getValue("amount"));
-  //     const formatted = new Intl.NumberFormat("en-US", {
-  //       style: "currency",
-  //       currency: "INR",
-  //     }).format(amount);
-
-  //     return <div className="text-center font-medium">{formatted}</div>;
-  //   },
-  // },
   {
     accessorKey: "item_in_stock",
     header: () => <div className="text-center">Available Quantity</div>,
@@ -87,19 +83,27 @@ export const columns: ColumnDef<Item | any>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
-      console.log(row.getCanExpand())
+      const price = parseFloat(row.getValue("item_price"));
+      const qty = parseInt(row.getValue("item_in_stock"));
+      const part_id = parseInt(row.getValue("part_id"));
+      const [openUpdate, setOpenUpdate] = useState(false);
+
+
+      const closePop = () => {
+        setOpenUpdate(false);
+      };
       return (
-        <Popover>
+        <Popover open={openUpdate} onOpenChange={setOpenUpdate}>
           <PopoverTrigger>...</PopoverTrigger>
-          <PopoverContent className="-translate-x-10 w-44">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-center">Edit Item</CardTitle>
-              </CardHeader>
-              <CardContent>
-                Place Holder
-              </CardContent>
-            </Card>
+          <PopoverContent className="-translate-x-10 z-40">
+            <UpdateItem
+              closeDialog={() => {
+                closePop();
+              }}
+              price={price}
+              qty={qty}
+              part_id={part_id}
+            />
           </PopoverContent>
         </Popover>
       );

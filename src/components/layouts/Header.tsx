@@ -8,7 +8,7 @@ type HeaderProps = {
 
 const Header: React.FC<HeaderProps> = ({ username }) => {
   const {pathname} = useLocation()
-  console.log(pathname);
+
   const pageName =
   pathname.substring(1, 2).toUpperCase() +
   pathname.substring(2, pathname.length).toLowerCase();

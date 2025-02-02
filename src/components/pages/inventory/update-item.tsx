@@ -1,11 +1,10 @@
 /**
  * ------------------------------------------------------------------
- * File: Add Consumer Functionality
+ * File: Columns Configuration
  * Author: Mubasshir Khan
- * Date: 19-Jan-2025
+ * Date: 26-Jan-2025
  * ------------------------------------------------------------------
- * this ReactJS module implements the functionality to manage
- * consumers in an intuitive and dynamic way.
+ * Column configuration for React Table
  * ------------------------------------------------------------------
  **/
 
@@ -26,31 +25,25 @@ import {
 import { Input } from "@/components/ui/input";
 import { Store } from "@/store/Store";
 import { useContext } from "react";
-import { saveConsumer } from "@/services/Customers";
 import { useToast } from "@/hooks/use-toast";
+import { updatePart } from "@/services/Inventory";
 
 const formSchema = z.object({
-  first_name: z.string().min(3, {
-    message: "Consumer first name must be at least 3 characters.",
-  }),
-  last_name: z.string(),
-  phone: z
-    .string()
-    .min(10, { message: "Phone number should be atleast 10 digit long" })
-    .max(13, { message: "Phone number can only be 13 digit long" }),
-  email: z.string(),
-  address: z.string(),
+  new_qty: z.any(),
+  new_price: z.any(),
 });
 
-const AddConsumer:React.FC<{ closeDialog:Function }> = ({ closeDialog }) => {
+const UpdateItem: React.FC<{
+  closeDialog: Function;
+  price: any;
+  qty: any;
+  part_id: number;
+}> = ({ closeDialog, price, qty, part_id }) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      first_name: "",
-      last_name: "",
-      email: "",
-      address: "",
-      phone: "",
+      new_qty: qty || 0,
+      new_price: price || 0,
     },
   });
 
@@ -60,18 +53,32 @@ const AddConsumer:React.FC<{ closeDialog:Function }> = ({ closeDialog }) => {
   if (!context) {
     return <p>Loading....</p>;
   }
-  const { setIsLoading, isLoading, fetchConsumer } = context;
+  const { setIsLoading, isLoading, setParts, parts } = context;
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       setIsLoading && setIsLoading(false);
-
-      const result = await saveConsumer(values);
-      console.log(result)
+      const item_to_update = {
+        part_id: part_id,
+        stock: values.new_qty,
+        price: values.new_price,
+      };
+      const result = await updatePart(item_to_update);
       if (result && result.status == "success") {
-        await fetchConsumer();
+        let updatedItem =
+          parts?.map((item) =>
+            item.part_id === part_id
+              ? {
+                  ...item,
+                  item_in_stock: values.new_qty,
+                  item_price: values.new_price,
+                }
+              : item
+          ) || [];
+        setParts(updatedItem);
+
         toast({
           title: "Success",
-          description: "Consumer saved",
+          description: "Item Updated",
         });
       } else {
         toast({
@@ -85,61 +92,35 @@ const AddConsumer:React.FC<{ closeDialog:Function }> = ({ closeDialog }) => {
     } catch (err) {
       closeDialog();
       toast({
-        title:"Error",
-        description:"Somthing went wrong",
+        title: "Error",
+        description: "Somthing went wrong",
       });
       setIsLoading && setIsLoading(false);
     }
   }
 
   return (
-    <Card className="w-96 mx-auto h-fit">
+    <Card className="mx-auto h-fit  bg-white select-none">
       <CardHeader>
-        <CardTitle className="text-center">Add new consumer</CardTitle>
+        <CardTitle className="text-center">Update Item</CardTitle>
         <CardContent className="p-0 ">
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
-              className="space-y-4   rounded-sm mt-3"
+              className="space-y-4   rounded-sm mt-3 "
             >
               <FormField
                 control={form.control}
-                name="first_name"
+                name="new_qty"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>First name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="First Name" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="last_name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Last name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Last name" type="text" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="phone"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Phone</FormLabel>
+                  <FormItem className="flex items-center justify-between">
+                    <FormLabel className="">Update Quantity</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Enter cosnumer phone number"
+                        className="w-20 ml-2 text-center"
                         type="number"
-                        maxLength={13}
-                        minLength={10}
+                        min={qty}
+                        placeholder="new_qty"
                         {...field}
                       />
                     </FormControl>
@@ -149,31 +130,15 @@ const AddConsumer:React.FC<{ closeDialog:Function }> = ({ closeDialog }) => {
               />
               <FormField
                 control={form.control}
-                name="email"
+                name="new_price"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
+                  <FormItem className="flex items-center justify-between">
+                    <FormLabel className="">Price</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Enter cosnumer email address"
-                        type="text"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="address"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Address</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Enter cosnumer  address"
-                        type="text"
+                        type="number"
+                        className="w-20 ml-2 text-center"
+                        placeholder="Price"
                         {...field}
                       />
                     </FormControl>
@@ -186,7 +151,7 @@ const AddConsumer:React.FC<{ closeDialog:Function }> = ({ closeDialog }) => {
                 type="submit"
                 disabled={isLoading}
               >
-                Save Consumer
+                Update Item
               </Button>
             </form>
           </Form>
@@ -196,4 +161,4 @@ const AddConsumer:React.FC<{ closeDialog:Function }> = ({ closeDialog }) => {
   );
 };
 
-export default AddConsumer;
+export default UpdateItem;
