@@ -38,7 +38,8 @@ const UpdateItem: React.FC<{
   price: any;
   qty: any;
   part_id: number;
-}> = ({ closeDialog, price, qty, part_id }) => {
+  updateTable:Function
+}> = ({ closeDialog, price, qty, part_id,updateTable }) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -53,7 +54,7 @@ const UpdateItem: React.FC<{
   if (!context) {
     return <p>Loading....</p>;
   }
-  const { setIsLoading, isLoading, setParts, parts } = context;
+  const { setIsLoading, isLoading } = context;
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       setIsLoading && setIsLoading(false);
@@ -64,17 +65,7 @@ const UpdateItem: React.FC<{
       };
       const result = await updatePart(item_to_update);
       if (result && result.status == "success") {
-        let updatedItem =
-          parts?.map((item) =>
-            item.part_id === part_id
-              ? {
-                  ...item,
-                  item_in_stock: values.new_qty,
-                  item_price: values.new_price,
-                }
-              : item
-          ) || [];
-        setParts(updatedItem);
+        updateTable(part_id,values.new_price,values.new_qty);
 
         toast({
           title: "Success",

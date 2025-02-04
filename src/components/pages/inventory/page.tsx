@@ -21,18 +21,32 @@ const Inventory = () => {
     return <Loading />;
   }
 
-  const { brandCategories, brands, isLoading, parts } = context;
+  const { brandCategories, brands, isLoading, parts, setParts } = context;
 
   const catChangeHandler = (cat_id: number) => {
     setCatID(cat_id);
     if (cat_id == -1) {
       setItems(parts);
     } else {
-      console.log(parts);
       setItems(() => {
         return parts?.filter((part) => part.cat_id == cat_id);
       });
     }
+  };
+  const onItemUpdate = (part_id: any, newPrice: any, newQty: any) => {
+    setItems((prevData) =>
+      prevData?.map((item) =>
+        item.part_id == part_id
+          ? { ...item, item_in_stock: newQty, item_price: newPrice }
+          : item
+      )
+    );
+    const updateStoreItem = parts?.map((item) =>
+      item.part_id == part_id
+        ? { ...item, item_in_stock: newQty, item_price: newPrice }
+        : item
+    );
+    setParts(updateStoreItem as Item[]);
   };
 
   useEffect(() => {
@@ -135,7 +149,11 @@ const Inventory = () => {
             <Skeleton className="h-[360px] w-full rounded-xl" />
           </div>
         ) : (
-          <DataTable columns={columns} data={items || []} updateRowData={()=>{}} />
+          <DataTable
+            columns={columns}
+            data={items || []}
+            updateRowData={onItemUpdate}
+          />
         )}
       </div>
     );

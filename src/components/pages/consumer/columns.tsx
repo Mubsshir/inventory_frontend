@@ -45,10 +45,6 @@ export const columns: ColumnDef<Payment | Customer| any>[] = [
     enableSorting: false,
     enableHiding: false,
   },
-  // {
-  //   accessorKey: "",
-  //   header: "Status",
-  // },
   {
     accessorKey: "name",
     header: "Consumer Name",

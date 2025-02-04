@@ -1,0 +1,21 @@
+*{
+  box-sizing: border-box;
+  margin: 0;
+}
+
+.pullFormDown {
+  display: block;
+  background-color: rgb(253, 243, 243);
+  position: absolute;
+  top: 0;
+  transform: translateY(-200%);
+  transition: all 0.7s;
+  transition-timing-function: ease-in-out;
+}
+
+.pullFormActive {
+  top: 100%;
+  transform: translateY(-100%);
+  transition: all 0.7s;
+  transition-timing-function: ease-in-out;
+}

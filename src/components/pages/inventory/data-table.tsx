@@ -21,44 +21,34 @@ import {
 import DataTablePagination from "@/components/ui/table-pagination";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
-import { Item } from "./columns";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
-  data: Item[];
+  data: TData[];
   updateRowData: (part_id: number, newPrice: number, newQty: number) => void;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  updateRowData,
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [tableData, setTableData] = useState<Item[]>(data);
 
-  const updateRowData = (part_id: any, newPrice: any, newQty: any) => {
-    setTableData((prevData) =>
-      prevData.map((item) =>
-        item.part_id == part_id
-          ? { ...item, item_in_stock: newQty, item_price: newPrice }
-          : item
-      )
-    );
-  };
   const table = useReactTable({
-    data: tableData as TData[],
+    data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     onRowSelectionChange: setRowSelection,
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
-
     state: {
       rowSelection,
       columnFilters,
     },
+    meta: { updateRowData },
   });
 
   return (
@@ -104,10 +94,10 @@ export function DataTable<TData, TValue>({
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
+                      {flexRender(cell.column.columnDef.cell, {
+                        ...cell.getContext(),
+                        updateRowData,
+                      })}
                     </TableCell>
                   ))}
                 </TableRow>

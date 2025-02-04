@@ -1,7 +1,11 @@
 import {
+  BadgeDollarSign,
+  BookIcon,
   ChartArea,
   ChevronRight,
+  HistoryIcon,
   LibraryBig,
+  LucideDollarSign,
   LucideLogOut,
   MonitorPlay,
   SendToBack,
@@ -71,6 +75,28 @@ const items = [
       },
     ],
   },
+  {
+    title: "Sales",
+    url: "/sale",
+    icon: BadgeDollarSign,
+    submenu: [
+      {
+        title: "Make Sale",
+        url: "/add-sale",
+        icon: LucideDollarSign,
+      },
+      {
+        title: "Sales History",
+        url: "/history",
+        icon: HistoryIcon,
+      },
+      {
+        title: "Sales Reports",
+        url: "/reports",
+        icon: BookIcon,
+      },
+    ],
+  },
 ];
 
 export function AppSidebar() {
@@ -132,11 +158,12 @@ export function AppSidebar() {
                         <CollapsibleContent className="space-y-1 mt-1">
                           {item.submenu.map((subitem) => (
                             <SidebarMenuSub key={subitem.title}>
-                              <SidebarMenuSubItem>
+                              <SidebarMenuSubItem className="flex items-center">
                                 <NavLink
                                   to={item.url + subitem.url}
                                   className={"flex items-center space-x-1 "}
                                 >
+                                  <subitem.icon size={18} className="mr-3" />
                                   <span>{subitem.title}</span>
                                 </NavLink>
                               </SidebarMenuSubItem>
