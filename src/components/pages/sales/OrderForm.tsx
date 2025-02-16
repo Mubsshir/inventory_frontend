@@ -1,7 +1,7 @@
 "use client";
 
-import { useContext, useState } from "react";
-import { ArrowDownCircle, ArrowUpCircle } from "lucide-react";
+import { useContext, useEffect, useState } from "react";
+import { ArrowDownCircle, ArrowUpCircle, CalendarIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -18,10 +18,19 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Customer, Store } from "@/store/Store";
+import AddConsumer from "../consumer/add-consumer";
+import { Calendar } from "@/components/ui/calendar";
+import { format } from "date-fns";
+import ItemTable from "./item-table";
 
 const OrderForm = () => {
   const [open, setOpen] = useState(false);
+  const [openAddConsumer, setOpenAddConsumer] = useState(false);
   const [selectedItem, setSelectedItem] = useState<Customer | undefined>(
+    undefined
+  );
+  const [orderDate, setOrderDate] = useState<Date | undefined>(undefined);
+  const [consumerList, setConsumerList] = useState<Customer[] | undefined>(
     undefined
   );
 
@@ -32,13 +41,36 @@ const OrderForm = () => {
 
   const { customers } = context;
 
+  const inputChangeHandler = (e: any) => {
+    setConsumerList(() => {
+      console.log(e.length);
+      return e.length === 0
+        ? customers
+        : customers?.filter((cnsr) => {
+            return cnsr.name.toLowerCase().includes(e.toLowerCase());
+          });
+    });
+    console.log(consumerList);
+  };
+
+  useEffect(() => {
+    setConsumerList(customers);
+  }, []);
+
   return (
-    <section className="pt-1 px-2">
+    <section className="pt-1 px-2 relative">
       <h3 className="text-sm mb-2">
         Customer Name <span className="text-red-500 ">*</span>
       </h3>
+
       <div className="flex items-center space-x-4 w-full">
-        <Popover open={open} onOpenChange={setOpen}>
+        <Popover
+          open={open}
+          onOpenChange={() => {
+            setOpen(!open);
+            setOpenAddConsumer(!setOpenAddConsumer);
+          }}
+        >
           <PopoverTrigger asChild>
             <Button
               variant="outline"
@@ -55,30 +87,44 @@ const OrderForm = () => {
           </PopoverTrigger>
           <PopoverContent className="p-0" side="bottom" align="start">
             <Command>
-              <CommandInput placeholder="Search Consumer........" />
+              <CommandInput
+                placeholder="Search Consumer........"
+                onValueChange={inputChangeHandler}
+              />
               <CommandList>
-                <CommandEmpty>No results found.</CommandEmpty>
-                <CommandGroup>
-                  {customers?.map((cnsr) => (
-                    <CommandItem
-                      key={cnsr.cnsr_id}
-                      value={String(cnsr.cnsr_id)}
-                      onSelect={(value) => {
-                        console.log(value);
-                        setSelectedItem(
-                          customers?.find(
-                            (data) => String(data.cnsr_id) == value
-                          )
-                        );
-                        setOpen(false);
-                      }}
-                    >
-                      <span>{cnsr.name}</span>
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
+                {consumerList?.length == 0 ? (
+                  <CommandEmpty>No results found.</CommandEmpty>
+                ) : (
+                  <CommandGroup>
+                    {consumerList?.map((cnsr) => (
+                      <CommandItem
+                        key={cnsr.cnsr_id}
+                        value={String(cnsr.name)}
+                        onSelect={() => {
+                          setSelectedItem(cnsr);
+                          setOpen(false);
+                        }}
+                      >
+                        <span>{cnsr.name}</span>
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                )}
               </CommandList>
-              <Button className="bg-red-500">Add New Customer</Button>
+              <Button
+                className="bg-red-500"
+                onClick={() => {
+                  setOpenAddConsumer(true);
+                }}
+              >
+                Add New Customer
+              </Button>
+              {openAddConsumer && (
+                <AddConsumer
+                  closeDialog={() => setOpenAddConsumer(false)}
+                  className={` absolute z-50 translate-x-2/4 `}
+                />
+              )}
             </Command>
           </PopoverContent>
         </Popover>
@@ -100,120 +146,40 @@ const OrderForm = () => {
           </h3>
         </div>
       )}
+      <h3 className="text-sm my-2">Order Date</h3>
+      <>
+        <Popover>
+          <PopoverTrigger asChild>
+            <div
+              className={
+                "select-none cursor-pointer w-[200px] pl-3 text-left font-normal bg-white border flex items-center p-2 rounded-lg"
+              }
+            >
+              {" "}
+              {orderDate ? format(orderDate, "PPP") : <span>Pick a date</span>}
+              <CalendarIcon
+                color="red"
+                className="ml-auto h-4 w-4 opacity-50"
+              />
+            </div>
+          </PopoverTrigger>
+          <PopoverContent side="bottom" align="start">
+            <Calendar
+              mode="single"
+              selected={orderDate}
+              onSelect={setOrderDate}
+              disabled={(date) =>
+                date > new Date() || date < new Date("1900-01-01")
+              }
+              initialFocus
+            />
+          </PopoverContent>
+        </Popover>
+      </>
+      <div>
+        <ItemTable />
+      </div>
     </section>
   );
 };
 export default OrderForm;
-
-// "use client"
-// import { Button } from "@/components/ui/button";
-// import { cn } from "@/lib/utils";
-// import {
-//   Popover,
-//   PopoverTrigger,
-//   PopoverContent,
-// } from "@radix-ui/react-popover";
-// import {
-//   CommandInput,
-//   CommandList,
-//   CommandEmpty,
-//   CommandGroup,
-//   CommandItem,
-// } from "cmdk";
-// import { Check, ChevronsUpDown, Command } from "lucide-react";
-// import { useState } from "react";
-
-// const frameworks = [
-//   {
-//     value: "next.js",
-//     label: "Next.js",
-//   },
-//   {
-//     value: "sveltekit",
-//     label: "SvelteKit",
-//   },
-//   {
-//     value: "nuxt.js",
-//     label: "Nuxt.js",
-//   },
-//   {
-//     value: "remix",
-//     label: "Remix",
-//   },
-//   {
-//     value: "astro",
-//     label: "Astro",
-//   },
-// ];
-
-// const OrderForm = () => {
-//   //   const [placeHolder, setPlaceHolder] = useState(undefined);
-//   const [open, setOpen] = useState(false);
-//   const [value, setValue] = useState("");
-
-//   return (
-//     <Popover open={open} onOpenChange={setOpen}>
-//       <PopoverTrigger asChild>
-//         <Button
-//           variant="outline"
-//           role="combobox"
-//           aria-expanded={open}
-//           className="w-[200px] justify-between"
-//         >
-//           {value
-//             ? frameworks.find((framework) => framework.value === value)?.label
-//             : "Select framework..."}
-//           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-//         </Button>
-//       </PopoverTrigger>
-//       <PopoverContent className="w-[200px] p-0">
-//         <Command>
-//           <CommandInput placeholder="Search framework..." />
-//           <CommandList>
-//             <CommandEmpty>No framework found.</CommandEmpty>
-//             <CommandGroup>
-//               {frameworks.map((framework) => (
-//                 <CommandItem
-//                   key={framework.value}
-//                   value={framework.value}
-//                   onSelect={(currentValue) => {
-//                     setValue(currentValue === value ? "" : currentValue);
-//                     setOpen(false);
-//                   }}
-//                 >
-//                   <Check
-//                     className={cn(
-//                       "mr-2 h-4 w-4",
-//                       value === framework.value ? "opacity-100" : "opacity-0"
-//                     )}
-//                   />
-//                   {framework.label}
-//                 </CommandItem>
-//               ))}
-//             </CommandGroup>
-//           </CommandList>
-//         </Command>
-//       </PopoverContent>
-//     </Popover>
-//   );
-//   {
-//     /* <div
-//         onClick={() => {
-//           setOpen((prev) => !prev);
-//         }}
-//         className={`${
-//           open ? "border-2 shadow-red-400 shadow-lg" : "border-2 border-gray"
-//         } rounded-lg text-gray-400 bg-white py-2 px-1  cursor-pointer select-none flex justify-between outline-black`}
-//       >
-//         {placeHolder || "Select or add a consumer"}
-//         {!open ? (
-//           <ArrowDownCircle className="text-red-400" />
-//         ) : (
-//           <ArrowUpCircle className="text-red-400" />
-//         )}
-//       </div>
-//       <div className="w-full h-[320px] bg-red-500 mt-3"></div> */
-//   }
-// };
-
-// export default OrderForm;

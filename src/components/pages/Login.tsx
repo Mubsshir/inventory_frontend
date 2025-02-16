@@ -17,6 +17,7 @@ import { authenticateUser } from "@/services/Authentication";
 import { Store } from "@/store/Store";
 import { useContext } from "react";
 import { useNavigate } from "react-router";
+import { useToast } from "@/hooks/use-toast";
 
 const formSchema = z.object({
   username: z.string().min(2, {
@@ -37,6 +38,7 @@ const Login = () => {
   });
 
   const context = useContext(Store);
+  const { toast } = useToast();
   const navigate = useNavigate();
   if (!context) {
     return <p>Loading....</p>;
@@ -50,6 +52,11 @@ const Login = () => {
         setIsAuth && setIsAuth(true);
         setUser && setUser(result.userData);
         navigate("/");
+      } else {
+        toast({
+          title: "Fail",
+          description: result.message,
+        });
       }
       setIsLoading && setIsLoading(false);
       return;

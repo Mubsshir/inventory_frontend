@@ -35,7 +35,7 @@ const Sale = () => {
         >
           <ArrowBigUp className="mx-auto text-white " />
         </div>
-        <OrderForm/>
+        <OrderForm />
       </div>
     </section>
   );

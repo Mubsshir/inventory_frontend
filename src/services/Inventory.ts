@@ -83,7 +83,30 @@ export const updatePart = async (
     });
 
     const data = await res.json();
-    return data
+    return data;
+  } catch (err) {
+    return { status: "error", data: undefined, message: err };
+  }
+};
+
+export const getPartBySearch = async (
+  keyword: String | undefined
+): Promise<ItemResponse> => {
+  try {
+    const res = await fetch(BACK_API + "/getPartsByCode", {
+      method: "POST",
+      headers: { ...getHeaders(), "Content-type": "application/json" },
+      body: JSON.stringify({ searchby: keyword }),
+    });
+    const data = await res.json();
+    if (res.ok) {
+      return {
+        status: data.status,
+        data: data.data,
+      };
+    }
+    console.log(data);
+    return { status: "error", data: undefined, message: "Somthing went wrong" };
   } catch (err) {
     return { status: "error", data: undefined, message: err };
   }

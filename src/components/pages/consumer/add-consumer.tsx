@@ -42,7 +42,10 @@ const formSchema = z.object({
   address: z.string(),
 });
 
-const AddConsumer:React.FC<{ closeDialog:Function }> = ({ closeDialog }) => {
+const AddConsumer: React.FC<{ closeDialog?: Function; className: String }> = ({
+  closeDialog,
+  className,
+}) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -66,9 +69,8 @@ const AddConsumer:React.FC<{ closeDialog:Function }> = ({ closeDialog }) => {
       setIsLoading && setIsLoading(false);
 
       const result = await saveConsumer(values);
-      console.log(result)
       if (result && result.status == "success") {
-        await fetchConsumer();
+       
         toast({
           title: "Success",
           description: "Consumer saved",
@@ -79,21 +81,22 @@ const AddConsumer:React.FC<{ closeDialog:Function }> = ({ closeDialog }) => {
           description: result?.message,
         });
       }
+      closeDialog && closeDialog();
+      await fetchConsumer();
       setIsLoading && setIsLoading(false);
-      closeDialog();
       return;
     } catch (err) {
-      closeDialog();
+      closeDialog && closeDialog();
       toast({
-        title:"Error",
-        description:"Somthing went wrong",
+        title: "Error",
+        description: "Somthing went wrong",
       });
       setIsLoading && setIsLoading(false);
     }
   }
 
   return (
-    <Card className="w-96 mx-auto h-fit">
+    <Card className={`${className} w-96 mx-auto h-fit`}>
       <CardHeader>
         <CardTitle className="text-center">Add new consumer</CardTitle>
         <CardContent className="p-0 ">

@@ -19,7 +19,6 @@ export default  function Consumer() {
     return {cnsr_id:cnsr.cnsr_id,name:cnsr.name,email:cnsr.email,address:cnsr.address,mobile:cnsr.mobile}
   })
 
-  console.log(cstmrs)
   return (
     <div className="container mx-auto py-10">
       <DataTable columns={columns} data={cstmrs||[]} />

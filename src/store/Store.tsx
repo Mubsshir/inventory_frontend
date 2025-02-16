@@ -91,17 +91,17 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const fetchConsumer = useCallback(async () => {
     try {
-      setIsLoading(true);
+
       const response = await getConsumerList();
       if (response && response.status === "success") {
         setCustomers(response.data);
       } else if (response && response.status === "401") {
         setError(response.message);
       }
-      setIsLoading(false);
+   
     } catch (err: any) {
       setError(err.message);
-      setIsLoading(false);
+   
     }
   }, []);
 
@@ -155,11 +155,16 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     if (isAuth) {
       fetchConsumer();
+    }
+  }, [fetchConsumer,isAuth]);
+
+  useEffect(() => {
+    if (isAuth) {
       fetchBrandCategory();
       fetchBrands();
       fetchParts(-1);
     }
-  }, [fetchConsumer, fetchBrandCategory, fetchBrands, isAuth, fetchParts]);
+  }, [fetchBrandCategory, fetchBrands, isAuth, fetchParts]);
 
   return (
     <Store.Provider
