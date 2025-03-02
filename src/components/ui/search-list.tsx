@@ -45,6 +45,7 @@ const SearchList: FC<{
                     onSelect(item);
                   }}
                   className="pl-3 py-1 hover:bg-red-500 hover:text-white text-sm cursor-pointer"
+                  key={item.part_id}
                 >
                   {item.item_name}
                 </li>

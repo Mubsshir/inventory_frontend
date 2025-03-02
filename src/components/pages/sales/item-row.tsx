@@ -24,27 +24,45 @@ interface ItemAction {
   type: ItemActionKind;
   payload: number;
 }
-
 // An interface for our state
-interface ItemState {
+export interface ItemState {
   part_id: number;
   qty: number;
   price: number;
   discount: number;
   total?: number;
 }
+const calculateTotal = (qty: number, price: number, discount: number) => {
+  return (price - price * (discount / 100)) * qty;
+};
 
 function reducer(state: ItemState, action: ItemAction) {
   const { type, payload } = action;
   switch (type) {
     case ItemActionKind.CHANGE_QTY:
-      return { ...state, qty: payload };
+      return {
+        ...state,
+        qty: payload,
+        total: calculateTotal(payload, state.price, state.discount),
+      };
     case ItemActionKind.CHANGE_DISCOUNT:
-      return { ...state, discount: payload };
+      return {
+        ...state,
+        discount: payload,
+        total: calculateTotal(state.qty, state.price, payload),
+      };
     case ItemActionKind.CHANGE_RATE:
-      return { ...state, price: payload };
+      return {
+        ...state,
+        price: payload,
+        total: calculateTotal(state.qty, payload, state.discount),
+      };
     case ItemActionKind.CHANGE_PARTID:
-      return { ...state, part_id: payload };
+      return {
+        ...state,
+        part_id: payload,
+        total: calculateTotal(state.part_id, state.price, state.discount),
+      };
     default:
       return state;
   }
@@ -58,7 +76,12 @@ const intialState: ItemState = {
   total: 0,
 };
 
-const TableRow: FC<{}> = ({}) => {
+const TableRow: FC<{
+  removeSelf: (key: string,part_id:any) => void;
+  rowid: string;
+  updateRow: (itemState: ItemState) => void;
+  usedParts: number[];
+}> = ({ removeSelf, rowid, updateRow, usedParts }) => {
   const [open, setOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<Item | undefined>(undefined);
   const [itemList, setItemList] = useState<Item[] | undefined>();
@@ -104,7 +127,12 @@ const TableRow: FC<{}> = ({}) => {
     return () => clearTimeout(fetchItems);
   }, [keyword]);
 
-  console.log(itemState);
+  useEffect(() => {
+    if (itemState.part_id !== 0) {
+      updateRow(itemState);
+    }
+  }, [itemState]);
+
   return (
     <>
       <div className="col-span-2 border border-t-0 ml-[-2px]">
@@ -130,7 +158,12 @@ const TableRow: FC<{}> = ({}) => {
           </PopoverTrigger>
           <PopoverContent className="p-0" side="bottom" align="start">
             <SearchList
-              listItems={itemList as []}
+              key={rowid}
+              listItems={
+                itemList?.filter(
+                  (item) => !usedParts.includes(item.part_id)
+                ) as []
+              }
               loading={loading}
               onSelect={(value) => {
                 setSelectedItem(value as Item);
@@ -210,7 +243,9 @@ const TableRow: FC<{}> = ({}) => {
         </h3>
 
         <div
-          onClick={() => {}}
+          onClick={() => {
+            removeSelf(rowid,itemState.part_id);
+          }}
           className=" text-red-500 flex align-middle justify-center cursor-pointer font-bold text-xl  "
         >
           <MinusCircle />

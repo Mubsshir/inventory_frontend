@@ -28,14 +28,17 @@ const Sale = () => {
         } `}
       >
         <div
-          className="text-center cursor-pointer w-full  mx-auto bg-red-500 shadow-sm absolute bottom-0"
+          className="text-center cursor-pointer w-full  mx-auto bg-red-500 shadow-sm  "
           onClick={() => {
             setViewOrderForm(false);
           }}
         >
           <ArrowBigUp className="mx-auto text-white " />
         </div>
-        <OrderForm />
+        <div className="w-full h-full overflow-y-scroll">
+          <OrderForm />
+          <div className="h-24 mb-5 w-full"></div>
+        </div>
       </div>
     </section>
   );
