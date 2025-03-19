@@ -74,6 +74,7 @@ export function DataTable<TData, TValue>({
             </DialogTrigger>
             <DialogContent className="absolute z-20 top-0 left-full ml-2">
               <AddConsumer
+                className={''}
                 closeDialog={() => {
                   closeDialog();
                 }}

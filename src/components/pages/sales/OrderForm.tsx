@@ -22,8 +22,13 @@ import AddConsumer from "../consumer/add-consumer";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import ItemTable from "./item-table";
+import { ItemState } from "./item-row";
+import { saveOrder } from "@/services/Sales";
+import { useToast } from "@/hooks/use-toast";
 
-const OrderForm = () => {
+const OrderForm: React.FC<{
+  closeOrder: Function;
+}> = ({ closeOrder }) => {
   const [open, setOpen] = useState(false);
   const [openAddConsumer, setOpenAddConsumer] = useState(false);
   const [selectedItem, setSelectedItem] = useState<Customer | undefined>(
@@ -33,6 +38,32 @@ const OrderForm = () => {
   const [consumerList, setConsumerList] = useState<Customer[] | undefined>(
     undefined
   );
+
+  const { toast } = useToast();
+  const CompleteOrder = async (cartItems: ItemState[], cartValue: object) => {
+    setOpen(false);
+    const orderData = {
+      cnsr_id: selectedItem?.cnsr_id,
+      orderDate: orderDate,
+      items: cartItems,
+      cartValue,
+    };
+    console.log(orderData);
+    const res = await saveOrder(orderData);
+    console.log(res);
+    if (res?.status == "success") {
+      toast({
+        title: "Success",
+        description: "Order Created Successfully",
+      });
+    } else {
+      toast({
+        title: "Error",
+        description: "Somthing went wrong",
+      });
+    }
+    closeOrder();
+  };
 
   const context = useContext(Store);
   if (!context) {
@@ -177,7 +208,12 @@ const OrderForm = () => {
         </Popover>
       </>
       <div>
-        <ItemTable />
+        <ItemTable
+          order_date={orderDate}
+          cnsr_id={selectedItem?.cnsr_id}
+          cancleOrder={closeOrder}
+          CompleteOrder={CompleteOrder}
+        />
       </div>
     </section>
   );

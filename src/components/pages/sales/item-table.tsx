@@ -1,11 +1,22 @@
 import { Button } from "@/components/ui/button";
 import TableRow, { ItemState } from "./item-row";
 import { PlusSquare } from "lucide-react";
-import { useState } from "react";
-
+import React, { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 let UniqueID: string = Date.now().toString();
 
-const ItemTable = () => {
+const ItemTable: React.FC<{
+  cancleOrder: Function;
+  cnsr_id?: number;
+  order_date?: Date;
+  CompleteOrder: Function;
+}> = ({ cancleOrder, cnsr_id, order_date, CompleteOrder }) => {
   const [itemRow, setItemRow] = useState([
     <TableRow
       rowid={UniqueID}
@@ -21,8 +32,10 @@ const ItemTable = () => {
   ]);
   const [cartItems, setCartItems] = useState<ItemState[]>([]);
   const [usedPartID, setUsedPartID] = useState<number[]>([]);
-  const [paymentType, setPaymentType] = useState("Cash");
+  const [paymentType, setPaymentType] = useState("1");
   const [amountPaid, setAmountPaid] = useState(0);
+  const [showWarning, setShowWarning] = useState(false);
+  const [showOrderCompleteBox, setShowOrderCompleteBox] = useState(false);
 
   const removeRow = (rowid: string, part_id: any) => {
     setItemRow((prev) => prev.filter((row) => row.key !== rowid));
@@ -32,6 +45,7 @@ const ItemTable = () => {
   const calculateTotals = (cartItems: ItemState[]) => {
     let totalAmount = 0;
     let totalDiscount = 0;
+    let totalPerDiscount = "0";
 
     cartItems.forEach((item) => {
       const itemTotal = item.price * item.qty; // price * qty
@@ -41,14 +55,20 @@ const ItemTable = () => {
 
     const subTotal = totalAmount; // Same as totalAmount
     const finalTotal = subTotal - totalDiscount; // SubTotal - Discount
-
-    return { totalAmount, totalDiscount, subTotal, finalTotal };
+    totalPerDiscount = ((totalDiscount / subTotal) * 100.0).toFixed(2);
+    return {
+      totalAmount,
+      totalDiscount,
+      subTotal,
+      finalTotal,
+      totalPerDiscount,
+    };
   };
 
   if (!calculateTotals) {
     return <p>Loading...</p>;
   }
-  const { totalAmount, totalDiscount, subTotal, finalTotal } =
+  const { totalAmount, totalDiscount, subTotal, finalTotal, totalPerDiscount } =
     calculateTotals(cartItems);
 
   const onRowItemUpdate = (itemState: ItemState) => {
@@ -83,6 +103,123 @@ const ItemTable = () => {
   const balanceAmount = Math.max(finalTotal - amountPaid, 0);
   return (
     <section className="w-full  py-3">
+      <Dialog
+        open={showOrderCompleteBox}
+        onOpenChange={() => {
+          setShowOrderCompleteBox(!showOrderCompleteBox);
+        }}
+      >
+        {!cnsr_id && (
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Oops..</DialogTitle>
+              <DialogDescription>Please Select Consumer</DialogDescription>
+            </DialogHeader>
+            <div className="w-full">
+              <button
+                className="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg"
+                onClick={() => {
+                  setShowOrderCompleteBox(false);
+                }}
+              >
+                OK
+              </button>
+            </div>
+          </DialogContent>
+        )}
+        {!order_date && (
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Oops..</DialogTitle>
+              <DialogDescription>Please Select Order Date</DialogDescription>
+            </DialogHeader>
+            <div className="flex items-center">
+              <button
+                className="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg"
+                onClick={() => {
+                  setShowOrderCompleteBox(false);
+                }}
+              >
+                Ok
+              </button>
+            </div>
+          </DialogContent>
+        )}
+        {cnsr_id && order_date ? (
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Are you want to complete this order?</DialogTitle>
+              <DialogDescription>
+                This action cannot be undone.{" "}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="flex gap-4">
+              <button
+                className="w-1/2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg"
+                onClick={() => {
+                  CompleteOrder(cartItems, {
+                    totalAmount,
+                    totalDiscount,
+                    subTotal,
+                    finalTotal,
+                    totalPerDiscount,
+                    paymentType,
+                  });
+                  setShowOrderCompleteBox(false);
+                }}
+              >
+                Yes
+              </button>
+              <button
+                className="w-1/2 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg"
+                onClick={() => {
+                  setShowOrderCompleteBox(false);
+                }}
+              >
+                No
+              </button>
+            </div>
+          </DialogContent>
+        ) : (
+          ""
+        )}
+      </Dialog>
+      <Dialog
+        open={showWarning}
+        onOpenChange={() => {
+          setShowWarning(!showWarning);
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Are you absolutely sure?</DialogTitle>
+            <DialogDescription>
+              This action cannot be undone. This will permanently delete your
+              cart data.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex gap-4">
+            <button
+              onClick={() => {
+                cancleOrder();
+                setShowWarning(false);
+              }}
+              className="w-1/2 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg"
+            >
+              Yes
+            </button>
+            <button
+              onClick={() => {
+                setShowWarning(false);
+              }}
+              className="w-1/2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg"
+            >
+              No
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       <div className="w-full mb-2 ">
         <h3 className="font-bold text-red-500">Item table</h3>
       </div>
@@ -182,9 +319,10 @@ const ItemTable = () => {
               onChange={(e) => setPaymentType(e.target.value)}
               className="w-full border border-red-500 rounded-lg px-3 py-2 focus:outline-none"
             >
-              <option value="Cash">Cash</option>
-              <option value="Credit">Credit</option>
-              <option value="UPI">UPI</option>
+              <option value="1">Cash</option>
+              <option value="2">Credit/Debit Card </option>
+              <option value="3">Cheque</option>
+              <option value="4">UPI</option>
             </select>
           </div>
 
@@ -195,7 +333,8 @@ const ItemTable = () => {
             </label>
             <input
               type="number"
-              value={amountPaid}
+              disabled
+              value={finalTotal.toFixed(2)}
               onChange={(e) => setAmountPaid(parseFloat(e.target.value) || 0)}
               className="w-full border border-red-400 rounded-lg px-3 py-2 focus:outline-none"
               placeholder="Enter amount"
@@ -213,14 +352,20 @@ const ItemTable = () => {
       </section>
       <div className="flex gap-4">
         <button
-          onClick={() => {}}
-          className="w-1/2 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg"
+          disabled={cartItems.length < 1 ? true : false}
+          onClick={() => {
+            setShowWarning(true);
+          }}
+          className="w-1/2 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg disabled:bg-red-300 disabled:cursor-not-allowed"
         >
           Cancel Order
         </button>
         <button
-          onClick={() => {}}
-          className="w-1/2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg"
+          disabled={totalAmount <= 0 || cartItems.length <= 0 ? true : false}
+          onClick={() => {
+            setShowOrderCompleteBox(true);
+          }}
+          className="w-1/2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg disabled:bg-green-300 disabled:cursor-not-allowed"
         >
           Complete Order
         </button>
