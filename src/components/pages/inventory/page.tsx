@@ -7,8 +7,14 @@ const BACK_API: string = import.meta.env.VITE_LOCAL_URL;
 import { useLocation } from "react-router";
 import { DataTable } from "./data-table";
 import { columns, Item } from "./columns";
-
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const Inventory = () => {
   const { pathname } = useLocation();
@@ -16,7 +22,7 @@ const Inventory = () => {
 
   const [catID, setCatID] = useState<number>(-1);
   const [items, setItems] = useState<Item[]>();
-
+  const [showWarning, setShowWarning] = useState(false);
   if (!context) {
     return <Loading />;
   }
@@ -120,6 +126,31 @@ const Inventory = () => {
   } else if (pathname == "/inventory/stocks") {
     return (
       <div className="  mx-auto py-10 flex flex-col ">
+        <Dialog
+          open={showWarning}
+          onOpenChange={() => {
+            setShowWarning(!showWarning);
+          }}
+        >
+          <DialogContent className="bottom-0">
+            <DialogHeader>
+              <DialogTitle>Import or Update Exsiting Stock Records</DialogTitle>
+              <DialogDescription>
+                Download the Excel Format and Fill Required Fields and then
+                upload
+              </DialogDescription>
+            </DialogHeader>
+          </DialogContent>
+          <div></div>
+        </Dialog>
+        <Button
+          className="self-start bg-red-500 text-white py-1 px-2 rounded-sm text-center"
+          onClick={() => {
+            setShowWarning(true);
+          }}
+        >
+          Import Data
+        </Button>
         <div className=" pt-2 mb-3">
           <ul className="flex p-1 space-x-4  border-b justify-start">
             <li

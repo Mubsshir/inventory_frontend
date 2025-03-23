@@ -8,7 +8,9 @@ import Loading from "./components/ui/Loading";
 import Dashboard from "./components/pages/Dashboard";
 import Consumer from "./components/pages/consumer/page";
 import Inventory from "./components/pages/inventory/page";
+import Data from "./components/pages/dataupload/page";
 import Sale from "./components/pages/sales/page";
+import SalesHistory from "./components/pages/sales_history/page";
 function App() {
   const context = useContext(Store);
   if (!context) {
@@ -35,18 +37,25 @@ function App() {
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="consumers" element={<Consumer />} />
         <Route path="inventory">
-          <Route element={<Navigate to="/bcategory" />} />{" "}
+          <Route element={<Navigate to="/bcategory" />} />
           {/* Default sub-route */}
           <Route path="bcategory" element={<Inventory />} />
           <Route path="brands" element={<Inventory />} />
           <Route path="stocks" element={<Inventory />} />
         </Route>
         <Route path="sale">
-          <Route element={<Navigate to="/add-sale" />} />{" "}
+          <Route element={<Navigate to="/add-sale" />} />
           {/* Default sub-route */}
           <Route path="add-sale" element={<Sale />} />
-          <Route path="history" element={<Consumer />} />
+          <Route path="history" element={<SalesHistory />} />
           <Route path="reports" element={<Consumer />} />
+        </Route>
+        <Route path="data">
+          <Route element={<Navigate to="/import" />} />
+          {/* Default sub-route */}
+          <Route path="import" element={<Data />} />
+          <Route path="approve" element={<Data />} />
+          <Route path="export" element={<Data />} />
         </Route>
         <Route path="*" element={<Dashboard />} />
       </Route>

@@ -29,7 +29,7 @@ const Sale = () => {
   console.log(recentOrder);
   return (
     <section className="w-full h-full relative">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between px-5 pt-3">
         <h3 className="text-xl">
           <span className="text-red-500 font-bold">Sales</span> Order
         </h3>
@@ -65,7 +65,7 @@ const Sale = () => {
           <div className="h-24 mb-5 w-full"></div>
         </div>
       </div>
-      <div className="p-6 bg-white dark:bg-gray-900 rounded-xl shadow-lg border border-red-500 mt-10 ">
+      <div className="p-6 bg-white dark:bg-gray-900 rounded-xl shadow-lg border border-red-500 mt-10 w-5/6 mx-auto ">
         <h2 className="text-xl font-bold text-red-600 dark:text-red-400 mb-4">
           Recent Orders
         </h2>

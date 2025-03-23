@@ -2,7 +2,10 @@ import {
   BadgeDollarSign,
   BookIcon,
   ChartArea,
+  CheckCheckIcon,
   ChevronRight,
+  Database,
+  DownloadIcon,
   HistoryIcon,
   LibraryBig,
   LucideDollarSign,
@@ -10,6 +13,7 @@ import {
   MonitorPlay,
   SendToBack,
   StoreIcon,
+  UploadCloudIcon,
   UserCircle2,
   WarehouseIcon,
 } from "lucide-react";
@@ -94,6 +98,28 @@ const items = [
         title: "Sales Reports",
         url: "/reports",
         icon: BookIcon,
+      },
+    ],
+  },
+  {
+    title: "Import/Export Data",
+    url: "/data",
+    icon: Database,
+    submenu: [
+      {
+        title: "Import Data",
+        url: "/import",
+        icon: DownloadIcon,
+      },
+      {
+        title: "Approve Import Data",
+        url: "/approve",
+        icon: CheckCheckIcon,
+      },
+      {
+        title: "Export Data",
+        url: "/export",
+        icon: UploadCloudIcon,
       },
     ],
   },
