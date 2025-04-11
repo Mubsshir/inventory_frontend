@@ -38,8 +38,7 @@ const UpdateItem: React.FC<{
   price: any;
   qty: any;
   part_id: number;
-  updateTable:Function
-}> = ({ closeDialog, price, qty, part_id,updateTable }) => {
+}> = ({ closeDialog, price, qty, part_id }) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -65,8 +64,6 @@ const UpdateItem: React.FC<{
       };
       const result = await updatePart(item_to_update);
       if (result && result.status == "success") {
-        updateTable(part_id,values.new_price,values.new_qty);
-
         toast({
           title: "Success",
           description: "Item Updated",

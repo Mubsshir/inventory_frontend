@@ -82,15 +82,14 @@ export const columns: ColumnDef<Item | any>[] = [
   },
   {
     id: "actions",
-    cell: ({ row, table }) => {
+    cell: ({ row }) => {
       const price = parseFloat(row.getValue("item_price"));
       const qty = parseInt(row.getValue("item_in_stock"));
       const part_id = parseInt(row.getValue("part_id"));
       const [openUpdate, setOpenUpdate] = useState(false);
-      const updateTable=table.options.meta?.updateRowData;
+
       const closePop = () => {
         setOpenUpdate(false);
-        
       };
       return (
         <Popover open={openUpdate} onOpenChange={setOpenUpdate}>
@@ -103,7 +102,6 @@ export const columns: ColumnDef<Item | any>[] = [
               price={price}
               qty={qty}
               part_id={part_id}
-              updateTable={updateTable}
             />
           </PopoverContent>
         </Popover>

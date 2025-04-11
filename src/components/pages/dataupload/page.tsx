@@ -1,6 +1,7 @@
-
 import { useLocation } from "react-router";
 import ImportData from "./import";
+import ApproveData from "./approval";
+import ExportData from "./export";
 
 const Data = () => {
   const { pathname } = useLocation();
@@ -8,17 +9,9 @@ const Data = () => {
   if (pathname == "/data/import") {
     return <ImportData />;
   } else if (pathname == "/data/approve") {
-    return (
-      <div>
-        <h4>Approval Data Page</h4>
-      </div>
-    );
+    return <ApproveData />;
   } else if (pathname == "/data/export") {
-    return (
-      <div>
-        <h4>Export Data Page</h4>
-      </div>
-    );
+    return <ExportData />;
   }
 };
 

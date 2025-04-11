@@ -9,7 +9,7 @@ export type FileList = {
 type Response = {
   status: string;
   message?: string | any;
-  data?: FileList[];
+  data?: FileList[] | any;
 };
 
 export const getUploadList = async (): Promise<Response> => {
@@ -28,12 +28,62 @@ export const getUploadList = async (): Promise<Response> => {
   }
 };
 
+export const getExportList = async (): Promise<Response> => {
+  try {
+    const res = await fetch(BACK_API + "/exportList", {
+      method: "GET",
+      headers: getHeaders(),
+    });
+    const data = await res.json();
+    console.log(data);
+    if (res.ok) {
+      return { status: data.status, data: data.data };
+    }
+    return { status: "error", data: undefined, message: "Somthing went wrong" };
+  } catch (err) {
+    return { status: "error", data: undefined, message: err };
+  }
+};
+
 export const viewUploadedData = async (excelId: string): Promise<Response> => {
   try {
     const res = await fetch(BACK_API + "/viewExcelData", {
       method: "POST",
       headers: { ...getHeaders(), "Content-type": "application/json" },
-      body: JSON.stringify({ file_id: excelId }),
+      body: JSON.stringify({ excelID: excelId }),
+    });
+    const data = await res.json();
+
+    return data;
+  } catch (err) {
+    return { status: "error", data: undefined, message: err };
+  }
+};
+
+export const viewUploadedDataDtl = async (
+  uploadID: string
+): Promise<Response> => {
+  try {
+    const res = await fetch(BACK_API + "/viewExcelDataDtl", {
+      method: "POST",
+      headers: { ...getHeaders(), "Content-type": "application/json" },
+      body: JSON.stringify({ uploadID: uploadID }),
+    });
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    return { status: "error", data: undefined, message: err };
+  }
+};
+
+export const viewUploadedDataForApproval = async (
+  excelId: string
+): Promise<Response> => {
+  try {
+    const res = await fetch(BACK_API + "/getDataForApproval", {
+      method: "POST",
+      headers: { ...getHeaders(), "Content-type": "application/json" },
+      body: JSON.stringify({ excelID: excelId }),
     });
     const data = await res.json();
 
@@ -54,7 +104,45 @@ export const getExcelFormat = async (excelId: string): Promise<BlobPart> => {
 
     return data;
   } catch (err) {
-     throw new Error("Unable to fetch Format file")
+    throw new Error("Unable to fetch Format file");
+  }
+};
+
+export const getExportData = async (
+  code: string
+): Promise<BlobPart | Response> => {
+  try {
+    const res = await fetch(BACK_API + "/exportData", {
+      method: "POST",
+      headers: { ...getHeaders(), "Content-type": "application/json" },
+      body: JSON.stringify({ code: code }),
+    });
+    const data = await res.blob();
+    if (res.ok) {
+      return data;
+    }
+    return await res.json();
+  } catch (err) {
+    throw new Error("Unable to fetch Format file");
+  }
+};
+
+export const apporveUploadedData = async (
+  excelId: string,
+  uploadID: string
+): Promise<Response> => {
+  try {
+    const res = await fetch(BACK_API + "/approveData", {
+      method: "POST",
+      headers: { ...getHeaders(), "Content-type": "application/json" },
+      body: JSON.stringify({ excelID: excelId, uploadID: uploadID }),
+    });
+    const data = await res.json();
+    console.log(data);
+    return data;
+  } catch (err) {
+    console.log(err);
+    return { status: "error", data: undefined, message: err };
   }
 };
 

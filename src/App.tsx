@@ -11,6 +11,7 @@ import Inventory from "./components/pages/inventory/page";
 import Data from "./components/pages/dataupload/page";
 import Sale from "./components/pages/sales/page";
 import SalesHistory from "./components/pages/sales_history/page";
+
 function App() {
   const context = useContext(Store);
   if (!context) {

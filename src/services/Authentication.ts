@@ -29,14 +29,17 @@ export const authenticateUser = async (
       headers: { ...getHeaders(), "Content-type": "application/json" },
       body: JSON.stringify(payload),
     });
+    const data = await res.json();
     if (res.ok) {
-      const data = await res.json();
-
       if (data.status && data.status === "success") {
         Cookies.set("token", data.token || "");
       }
 
-      return { status: "success", message: data.message, userData: data.user };
+      return {
+        status: data.status,
+        message: data.message,
+        userData: data.user,
+      };
     } else {
       return { status: "401", message: "Unauthorized, Please login again." };
     }

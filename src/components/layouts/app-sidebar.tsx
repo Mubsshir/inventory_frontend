@@ -1,6 +1,5 @@
 import {
   BadgeDollarSign,
-  BookIcon,
   ChartArea,
   CheckCheckIcon,
   ChevronRight,
@@ -93,11 +92,6 @@ const items = [
         title: "Sales History",
         url: "/history",
         icon: HistoryIcon,
-      },
-      {
-        title: "Sales Reports",
-        url: "/reports",
-        icon: BookIcon,
       },
     ],
   },

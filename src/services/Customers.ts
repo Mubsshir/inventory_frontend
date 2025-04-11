@@ -18,7 +18,11 @@ export const getConsumerList = async (): Promise<CustomerRes | undefined> => {
     if (res.ok) {
       return { status: data.status, data: data.data };
     }
-    return { status: "error", data: undefined, message: "Somthing went wrong" };
+    return {
+      status: data.status,
+      data: undefined,
+      message: "Somthing went wrong",
+    };
   } catch (err) {
     return { status: "error", data: undefined, message: err };
   }
@@ -38,7 +42,7 @@ export const saveConsumer = async (
     if (res.ok) {
       return { status: data.status, data: data.data };
     }
-    return { status: "error", data: undefined, message: data.message };
+    return { status: data.status, data: undefined, message: data.message };
   } catch (err) {
     return { status: "error", data: undefined, message: err };
   }

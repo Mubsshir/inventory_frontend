@@ -3,6 +3,7 @@ import { isUserAuthorized } from "@/services/Authentication";
 import { getConsumerList } from "@/services/Customers";
 import { getBrandCategory, getBrands, getPartList } from "@/services/Inventory";
 import { Item } from "@/components/pages/inventory/columns";
+import { useNavigate } from "react-router";
 
 type StoreTypes = {
   isAuth?: boolean;
@@ -68,6 +69,7 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
   >(undefined);
   const [brands, setBrands] = useState<Brand[] | undefined>(undefined);
   const [parts, setParts] = useState<Item[]>();
+  const navigate = useNavigate();
 
   const checkAuth = useCallback(async () => {
     try {
@@ -77,6 +79,7 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
         setIsAuth(true);
         setUser(response.userData); // Assuming response.data is of type userData
       } else if (response && response.status === "401") {
+        navigate("/login");
         setIsAuth(false);
         setError(response.message);
       }
@@ -91,17 +94,16 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const fetchConsumer = useCallback(async () => {
     try {
-
       const response = await getConsumerList();
       if (response && response.status === "success") {
         setCustomers(response.data);
       } else if (response && response.status === "401") {
+        setIsAuth(false);
+        navigate("/login");
         setError(response.message);
       }
-   
     } catch (err: any) {
       setError(err.message);
-   
     }
   }, []);
 
@@ -112,6 +114,8 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
       if (response && response.status === "success") {
         setBrandCategories(response.data as BrandCategory[]);
       } else if (response && response.status === "401") {
+        setIsAuth(false);
+        navigate("/login");
         setError(response.message);
       }
       setIsLoading(false);
@@ -128,6 +132,8 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
       if (response && response.status === "success") {
         setBrands(response.data as Brand[]);
       } else if (response && response.status === "401") {
+        setIsAuth(false);
+        navigate("/login");
         setError(response.message);
       }
       setIsLoading(false);
@@ -139,12 +145,10 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const fetchParts = useCallback(async (catID: Number) => {
     try {
-      setIsLoading(true);
       const res = await getPartList(catID);
       setParts(res.data);
-      setIsLoading(false);
     } catch (err) {
-      setIsLoading(false);
+      throw new Error("Somthing went wrong.");
     }
   }, []);
 
@@ -156,7 +160,7 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
     if (isAuth) {
       fetchConsumer();
     }
-  }, [fetchConsumer,isAuth]);
+  }, [fetchConsumer, isAuth]);
 
   useEffect(() => {
     if (isAuth) {

@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/table";
 import DataTablePagination from "@/components/ui/table-pagination";
 import { useState } from "react";
-import { Input } from "@/components/ui/input";
+
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -53,18 +53,6 @@ export function DataTable<TData, TValue>({
 
   return (
     <>
-      <div className="flex items-center py-4 self-end">
-        <Input
-          placeholder="Filter by Item Name..."
-          value={
-            (table.getColumn("item_name")?.getFilterValue() as string) ?? ""
-          }
-          onChange={(event) =>
-            table.getColumn("item_name")?.setFilterValue(event.target.value)
-          }
-          className="w-96"
-        />
-      </div>
       <div className="rounded-md border space-y-2 pb-2 ">
         <Table>
           <TableHeader className="bg-gray-100 ">

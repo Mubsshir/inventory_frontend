@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Loading from "@/components/ui/Loading";
 import { Store } from "@/store/Store";
@@ -8,13 +7,8 @@ import { useLocation } from "react-router";
 import { DataTable } from "./data-table";
 import { columns, Item } from "./columns";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+
+import { Input } from "@/components/ui/input";
 
 const Inventory = () => {
   const { pathname } = useLocation();
@@ -22,7 +16,9 @@ const Inventory = () => {
 
   const [catID, setCatID] = useState<number>(-1);
   const [items, setItems] = useState<Item[]>();
-  const [showWarning, setShowWarning] = useState(false);
+
+  const [filteredStock, setFilteredStock] = useState<Item[]>();
+  const [searchTerm, setSearchTerm] = useState("");
   if (!context) {
     return <Loading />;
   }
@@ -56,6 +52,15 @@ const Inventory = () => {
   };
 
   useEffect(() => {
+    const filtered = items?.filter(
+      (itm) =>
+        itm.item_no.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        itm.item_name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredStock(filtered);
+  }, [searchTerm, items]);
+
+  useEffect(() => {
     catChangeHandler(catID);
   }, [parts]);
 
@@ -66,7 +71,6 @@ const Inventory = () => {
           <CardTitle className="w-fit">
             <h3>Brand Categories</h3>
           </CardTitle>
-          <Button className="w-fit bg-red-500">Add New Brand Category</Button>
         </CardHeader>
 
         <CardContent className="flex flex-wrap justify-around mt-5 ">
@@ -97,7 +101,6 @@ const Inventory = () => {
           <CardTitle className="w-fit">
             <h3>Brands</h3>
           </CardTitle>
-          <Button className="w-fit bg-red-500">Add New Brand Category</Button>
         </CardHeader>
 
         <CardContent className=" flex justify-center mx-auto h-auto mt-5 overflow-y-scroll scroll-smooth ">
@@ -126,31 +129,6 @@ const Inventory = () => {
   } else if (pathname == "/inventory/stocks") {
     return (
       <div className="  mx-auto py-10 flex flex-col ">
-        <Dialog
-          open={showWarning}
-          onOpenChange={() => {
-            setShowWarning(!showWarning);
-          }}
-        >
-          <DialogContent className="bottom-0">
-            <DialogHeader>
-              <DialogTitle>Import or Update Exsiting Stock Records</DialogTitle>
-              <DialogDescription>
-                Download the Excel Format and Fill Required Fields and then
-                upload
-              </DialogDescription>
-            </DialogHeader>
-          </DialogContent>
-          <div></div>
-        </Dialog>
-        <Button
-          className="self-start bg-red-500 text-white py-1 px-2 rounded-sm text-center"
-          onClick={() => {
-            setShowWarning(true);
-          }}
-        >
-          Import Data
-        </Button>
         <div className=" pt-2 mb-3">
           <ul className="flex p-1 space-x-4  border-b justify-start">
             <li
@@ -175,6 +153,13 @@ const Inventory = () => {
             ))}
           </ul>
         </div>
+        <Input
+          type="text"
+          placeholder="Search by Part Number Or Part Name"
+          className="mb-4 w-full max-w-md p-2 border border-gray-300 dark:border-gray-700 rounded-lg"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
         {isLoading ? (
           <div className="flex flex-col space-y-3">
             <Skeleton className="h-[360px] w-full rounded-xl" />
@@ -182,7 +167,7 @@ const Inventory = () => {
         ) : (
           <DataTable
             columns={columns}
-            data={items || []}
+            data={filteredStock || []}
             updateRowData={onItemUpdate}
           />
         )}

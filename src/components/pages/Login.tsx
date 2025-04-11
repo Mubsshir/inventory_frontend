@@ -15,9 +15,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { authenticateUser } from "@/services/Authentication";
 import { Store } from "@/store/Store";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import { useToast } from "@/hooks/use-toast";
 
 const formSchema = z.object({
   username: z.string().min(2, {
@@ -36,36 +35,42 @@ const Login = () => {
       password: "",
     },
   });
-
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
   const context = useContext(Store);
-  const { toast } = useToast();
+
   const navigate = useNavigate();
   if (!context) {
     return <p>Loading....</p>;
   }
-  const { setIsAuth, setUser, setIsLoading, isLoading } = context;
+
+  const { setIsAuth, setUser } = context;
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       setIsLoading && setIsLoading(true);
       const result = await authenticateUser(values.username, values.password);
-      if (result.status == "success") {
+      console.log(result);
+      if (result.status === "success") {
         setIsAuth && setIsAuth(true);
         setUser && setUser(result.userData);
         navigate("/");
-      } else {
-        toast({
-          title: "Fail",
-          description: result.message,
-        });
+        return;
       }
+      setError(result.message);
       setIsLoading && setIsLoading(false);
       return;
     } catch (err) {
+      setError("Somthing Went Wrong.");
       setIsLoading && setIsLoading(false);
       setIsAuth && setIsAuth(true);
     }
   }
 
+  useEffect(() => {
+    setTimeout(() => {
+      setError("");
+    }, 3000);
+  }, [setError]);
   return (
     <div className="w-full h-lvh flex items-center  justify-center">
       <Card className="w-96 mx-auto h-fit">
@@ -114,6 +119,9 @@ const Login = () => {
                 >
                   Login
                 </Button>
+                {error.length > 0 && (
+                  <h3 className="font-bold text-red-600">{error}</h3>
+                )}
               </form>
             </Form>
           </CardContent>
