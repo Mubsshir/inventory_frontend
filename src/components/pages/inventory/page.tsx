@@ -30,10 +30,13 @@ const Inventory = () => {
     if (cat_id == -1) {
       setItems(parts);
     } else {
+      console.log(cat_id);
+
       setItems(() => {
         return parts?.filter((part) => part.cat_id == cat_id);
       });
     }
+    console.log(items);
   };
   const onItemUpdate = (part_id: any, newPrice: any, newQty: any) => {
     setItems((prevData) =>
