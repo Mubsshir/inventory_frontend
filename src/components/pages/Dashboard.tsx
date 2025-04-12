@@ -15,22 +15,13 @@ import {
   BarChart,
   CartesianGrid,
   Cell,
-  Label,
   Line,
   LineChart,
-  Pie,
-  PieChart,
   XAxis,
   YAxis,
 } from "recharts";
 
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-} from "../ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "../ui/card";
 import { AnimatedCounter } from "../ui/counter";
 import { DashList } from "../ui/dashboard-list";
 
