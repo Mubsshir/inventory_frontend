@@ -3,13 +3,12 @@
 import { useEffect, useState } from "react";
 
 type AnimatedCounterProps = {
-  title: string;
+  title?: string;
   value: number;
   duration?: number;
 };
 
 export const AnimatedCounter = ({
-  title,
   value,
   duration = 3000,
 }: AnimatedCounterProps) => {
@@ -33,8 +32,7 @@ export const AnimatedCounter = ({
   }, [value, duration]);
 
   return (
-    <div className="rounded-md  p-4 shadow-sm bg-card">
-      <p className=" text-muted-foreground">{title}</p>
+    <div className="rounded-md p-2   h-[150px] justify-center align-middle flex flex-col">
       <p className=" font-bold text-primary mt-1">{count.toLocaleString()}</p>
     </div>
   );

@@ -15,8 +15,11 @@ import {
   BarChart,
   CartesianGrid,
   Cell,
+  Label,
   Line,
   LineChart,
+  Pie,
+  PieChart,
   XAxis,
   YAxis,
 } from "recharts";
@@ -131,139 +134,211 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <div className=" flex flex-wrap justify-start sm:justify-between align-middle w-full  h-full space-x-1 space-y-2 overflow-y-scroll overflow-x-hidden">
+    <div className="w-full h-full overflow-y-scroll space-y-2">
       {dashboardData?.section.map((data, idx) => {
         return (
-          <Card
-            key={idx}
-            className={`flex  flex-col h-fit  w-[${data.chartsize}%] `}
-          >
-            <CardHeader className="items-start pb-0">
-              <CardTitle>{data.title}</CardTitle>
+          // this is main section
+          <Card key={idx} className={`w-[${data.chartsize}%]`}>
+            <CardHeader className="items-start px-2 m-0">
+              <CardTitle className="text-red-500 font-extrabold text-lg">
+                {data.title}
+              </CardTitle>
             </CardHeader>
-            <CardContent className=" pb-0">
-              <section className=" w-full flex flex-wrap justify-around  mt-2 py-2">
+            <CardContent className={`w-full`}>
+              <section className="flex w-full space-x-1 space-y-1 lg:flex-row md:flex-col flex-col ">
                 {dashboardData.subsection.map((itm, index) => {
                   if (itm.position == data.card)
                     return (
-                      <Card
-                        key={index}
-                        className={` w-[${itm.size}%] flex h-fit max-h-96 space-x-1  flex-col align-middle  py-1 m-1 `}
+                      // this is subsection
+                      <div
+                        className={` ${itm.size} sm:w-full lg-flex-row space-y-1 sm:flex-col border  border-b-2 border-b-red-400 shadow-md p-4 rounded-lg `}
                       >
-                        <CardHeader className="items-start pb-0">
-                          <CardTitle>{itm.info}</CardTitle>
-                        </CardHeader>
-                        <CardContent className={`  align-middle pb-1 w-full `}>
-                          {dashboardData.dashboardData.map(
-                            (graphicData, key) => {
-                              if (index == key) {
-                                if (graphicData[0].charttype == "meter") {
-                                  return (
-                                    <div className=" text-3xl self-center">
-                                      <AnimatedCounter
-                                        title={graphicData[0].title}
-                                        value={parseInt(graphicData[0].value1)}
-                                      />
-                                    </div>
-                                  );
-                                }
-                                if (graphicData[0].charttype == "list") {
-                                  return (
-                                    <div className=" h-44 my-1  overflow-y-scroll .hideScroll">
-                                      <DashList data={graphicData} />
-                                    </div>
-                                  );
-                                } else if (graphicData[0].charttype == "bar") {
-                                  const chartData = graphicData.map((itm) => ({
-                                    name: itm.title,
-                                    value: Number(itm.value1),
-                                    value2: Number(itm.value2),
-                                    label1: itm.label1,
-                                    label2: itm.lable2,
-                                    color: itm.color,
-                                  }));
-
-                                  return (
-                                    <div className=" mt-3">
-                                      <ChartContainer config={chartConfig}>
-                                        <BarChart data={chartData}>
-                                          <CartesianGrid vertical={false} />
-                                          <XAxis
-                                            dataKey="name"
-                                            tickLine={true}
-                                            tickMargin={10}
-                                            axisLine={true}
-                                          />
-                                          <YAxis />
-                                          <ChartTooltip
-                                            cursor={false}
-                                            content={
-                                              <ChartTooltipContent indicator="line" />
-                                            }
-                                          />
-                                          <Bar dataKey="value" radius={4}>
-                                            {chartData.map((index) => (
-                                              <Cell
-                                                key={`bar-cell-${index}`}
-                                                fill={"red"}
-                                              />
-                                            ))}
-                                          </Bar>
-                                        </BarChart>
-                                      </ChartContainer>
-                                    </div>
-                                  );
-                                } else if (graphicData[0].charttype == "line") {
-                                  const chartData = graphicData.map((itm) => ({
-                                    name: itm.title,
-                                    value: Number(itm.value1),
-                                    value2: Number(itm.value2),
-                                    label1: itm.label1,
-                                    label2: itm.lable2,
-                                    color: itm.color,
-                                  }));
-
-                                  return (
-                                    <div className="max-w-md h-auto mt-3">
-                                      <ChartContainer config={chartConfig}>
-                                        <LineChart
-                                          accessibilityLayer
-                                          data={chartData}
-                                          margin={{
-                                            left: 12,
-                                            right: 12,
-                                          }}
-                                        >
-                                          <CartesianGrid vertical={false} />
-                                          <XAxis
-                                            dataKey="name"
-                                            tickLine={true}
-                                            axisLine={true}
-                                            tickMargin={10}
-                                          />
-                                          <ChartTooltip
-                                            cursor={true}
-                                            content={
-                                              <ChartTooltipContent hideLabel />
-                                            }
-                                          />
-                                          <Line
-                                            dataKey="value"
-                                            type="natural"
-                                            stroke="red"
-                                            strokeWidth={3}
-                                            dot={true}
-                                          />
-                                        </LineChart>
-                                      </ChartContainer>
-                                    </div>
-                                  );
-                                }
-                              }
+                        <h3 className="font-semibold text-lg ">{itm.info}</h3>
+                        {dashboardData.dashboardData.map((graphicData, key) => {
+                          if (index == key) {
+                            if (graphicData[0].charttype == "meter") {
+                              return (
+                                <div className={`w-full  text-3xl `}>
+                                  <AnimatedCounter
+                                    title={graphicData[0].title}
+                                    value={parseInt(graphicData[0].value1)}
+                                  />
+                                </div>
+                              );
                             }
-                          )}
-                        </CardContent>
-                      </Card>
+                            if (graphicData[0].charttype == "list") {
+                              return (
+                                <div className=" h-44 my-1  overflow-y-scroll .hideScroll">
+                                  <DashList data={graphicData} />
+                                </div>
+                              );
+                            } else if (graphicData[0].charttype == "bar") {
+                              const chartData = graphicData.map((itm) => ({
+                                name: itm.title,
+                                value: Number(itm.value1),
+                                value2: Number(itm.value2),
+                                label1: itm.label1,
+                                label2: itm.lable2,
+                                color: itm.color,
+                              }));
+
+                              return (
+                                <div className=" mt-3">
+                                  <ChartContainer config={chartConfig}>
+                                    <BarChart data={chartData}>
+                                      <CartesianGrid vertical={false} />
+                                      <XAxis
+                                        dataKey="name"
+                                        tickLine={true}
+                                        tickMargin={10}
+                                        axisLine={true}
+                                      />
+                                      <YAxis />
+                                      <ChartTooltip
+                                        cursor={false}
+                                        content={
+                                          <ChartTooltipContent indicator="line" />
+                                        }
+                                      />
+                                      <Bar dataKey="value" radius={4}>
+                                        {chartData.map((index) => (
+                                          <Cell
+                                            key={`bar-cell-${index}`}
+                                            fill={"red"}
+                                          />
+                                        ))}
+                                      </Bar>
+                                    </BarChart>
+                                  </ChartContainer>
+                                </div>
+                              );
+                            } else if (graphicData[0].charttype == "line") {
+                              const chartData = graphicData.map((itm) => ({
+                                name: itm.title,
+                                value: Number(itm.value1),
+                                value2: Number(itm.value2),
+                                label1: itm.label1,
+                                label2: itm.lable2,
+                                color: itm.color,
+                              }));
+
+                              return (
+                                <div className=" ">
+                                  <ChartContainer
+                                    className={`h-64  md:${itm.size} w-full`}
+                                    config={chartConfig}
+                                  >
+                                    <LineChart
+                                      accessibilityLayer
+                                      data={chartData}
+                                      margin={{
+                                        left: 12,
+                                        right: 12,
+                                      }}
+                                    >
+                                      <CartesianGrid vertical={false} />
+                                      <XAxis
+                                        dataKey="name"
+                                        tickLine={true}
+                                        axisLine={true}
+                                        tickMargin={10}
+                                      />
+                                      <ChartTooltip
+                                        cursor={true}
+                                        content={
+                                          <ChartTooltipContent hideLabel />
+                                        }
+                                      />
+                                      <Line
+                                        dataKey="value"
+                                        type="natural"
+                                        stroke="red"
+                                        strokeWidth={3}
+                                        dot={true}
+                                      />
+                                    </LineChart>
+                                  </ChartContainer>
+                                </div>
+                              );
+                            } else if (graphicData[0].charttype == "pie") {
+                              const chartData = graphicData.map((itm) => ({
+                                name: itm.title,
+                                value: Number(itm.value1),
+                                value2: Number(itm.value2),
+                                label1: itm.label1,
+                                label2: itm.lable2,
+                                color: itm.color,
+                              }));
+
+                              return (
+                                <div className=" ">
+                                  <ChartContainer
+                                    key={idx}
+                                    config={chartConfig}
+                                    className="mx-auto aspect-square max-h-[250px]"
+                                  >
+                                    <PieChart>
+                                      <ChartTooltip
+                                        cursor={false}
+                                        content={
+                                          <ChartTooltipContent hideLabel />
+                                        }
+                                      />
+                                      <Pie
+                                        data={chartData}
+                                        dataKey="value"
+                                        nameKey="name"
+                                        innerRadius={40}
+                                        strokeWidth={5}
+                                      >
+                                        {chartData.map((entry, index) => (
+                                          <Cell
+                                            key={`cell-${index}`}
+                                            fill={entry.color}
+                                          />
+                                        ))}
+                                        <Label
+                                          content={({ viewBox }) => {
+                                            if (
+                                              viewBox &&
+                                              "cx" in viewBox &&
+                                              "cy" in viewBox
+                                            ) {
+                                              return (
+                                                <text
+                                                  x={viewBox.cx}
+                                                  y={viewBox.cy}
+                                                  textAnchor="middle"
+                                                  dominantBaseline="middle"
+                                                >
+                                                  <tspan
+                                                    x={viewBox.cx}
+                                                    y={viewBox.cy}
+                                                    className="fill-foreground text-3xl font-bold"
+                                                  >
+                                                    {chartData[0].value.toLocaleString()}
+                                                  </tspan>
+                                                  <tspan
+                                                    x={viewBox.cx}
+                                                    y={(viewBox.cy || 0) + 24}
+                                                    className="fill-muted-foreground"
+                                                  >
+                                                    {graphicData[0].title}
+                                                  </tspan>
+                                                </text>
+                                              );
+                                            }
+                                          }}
+                                        />
+                                      </Pie>
+                                    </PieChart>
+                                  </ChartContainer>
+                                </div>
+                              );
+                            }
+                          }
+                        })}
+                      </div>
                     );
                 })}
               </section>
