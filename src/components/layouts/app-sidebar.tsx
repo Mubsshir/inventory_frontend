@@ -169,7 +169,7 @@ export function AppSidebar() {
                           <SidebarMenuButton>
                             {"  "}
                             <item.icon />
-                            <NavLink to={"/"}>
+                            <NavLink to={item.url}>
                               <span>{item.title}</span>
                             </NavLink>
                             <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />

@@ -6,6 +6,8 @@ import OrderForm from "./OrderForm";
 import { getSalesOrder, OrderDetail } from "@/services/Sales";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle, XCircle } from "lucide-react";
+import { useLocation } from "react-router";
+import SalesHistory from "../sales_history/page";
 
 const Sale = () => {
   const [viewOrderForm, setViewOrderForm] = useState(false);
@@ -21,102 +23,105 @@ const Sale = () => {
     }
   }, []);
 
+  const { pathname } = useLocation();
   useEffect(() => {
     if (viewOrderForm == false) {
       fetchRecentOrder();
     }
   }, [viewOrderForm]);
-  console.log(recentOrder);
-  return (
-    <section className="w-full h-full relative">
-      <div className="flex items-center justify-between px-5 pt-3">
-        <h3 className="text-xl">
-          <span className="text-red-500 font-bold">Sales</span> Order
-        </h3>
-        <Button
-          className="bg-red-500 px-4"
-          onClick={() => {
-            setViewOrderForm(true);
-          }}
-        >
-          <PlusIcon color="white" /> Add Order
-        </Button>
-      </div>
 
-      <div
-        className={` w-full h-full z-20 pullFormDown ${
-          viewOrderForm && "pullFormActive "
-        } `}
-      >
-        <div
-          className="text-center cursor-pointer w-full  mx-auto bg-red-500 shadow-sm  "
-          onClick={() => {
-            setViewOrderForm(false);
-          }}
-        >
-          <ArrowBigUp className="mx-auto text-white " />
+  if (pathname == "/sale/add-sale" || pathname == "/sale")
+    return (
+      <section className="w-full h-full relative">
+        <div className="flex items-center justify-between px-5 pt-3">
+          <h3 className="text-xl">
+            <span className="text-red-500 font-bold">Sales</span> Order
+          </h3>
+          <Button
+            className="bg-red-500 px-4"
+            onClick={() => {
+              setViewOrderForm(true);
+            }}
+          >
+            <PlusIcon color="white" /> Add Order
+          </Button>
         </div>
-        <div className="w-full h-full overflow-y-scroll">
-          <OrderForm
-            closeOrder={() => {
+
+        <div
+          className={` w-full h-full z-20 pullFormDown ${
+            viewOrderForm && "pullFormActive "
+          } `}
+        >
+          <div
+            className="text-center cursor-pointer w-full  mx-auto bg-red-500 shadow-sm  "
+            onClick={() => {
               setViewOrderForm(false);
             }}
-          />
-          <div className="h-24 mb-5 w-full"></div>
+          >
+            <ArrowBigUp className="mx-auto text-white " />
+          </div>
+          <div className="w-full h-full overflow-y-scroll">
+            <OrderForm
+              closeOrder={() => {
+                setViewOrderForm(false);
+              }}
+            />
+            <div className="h-24 mb-5 w-full"></div>
+          </div>
         </div>
-      </div>
-      <div className="p-6 bg-white dark:bg-gray-900 rounded-xl shadow-lg border border-red-500 mt-10 w-5/6 mx-auto ">
-        <h2 className="text-xl font-bold text-red-600 dark:text-red-400 mb-4">
-          Recent Orders
-        </h2>
+        <div className="p-6 bg-white dark:bg-gray-900 rounded-xl shadow-lg border border-red-500 mt-10 w-5/6 mx-auto ">
+          <h2 className="text-xl font-bold text-red-600 dark:text-red-400 mb-4">
+            Recent Orders
+          </h2>
 
-        <div className="space-y-4 max-h-[70vh] overflow-y-scroll">
-          {recentOrder?.map((order, index) => (
-            <div
-              key={index}
-              className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700"
-            >
-              <div className="flex justify-between items-center">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  Order #{order.OrderID}
-                </h3>
-                {order.OrderCompleted === "Yes" ? (
-                  <Badge className="bg-green-500 text-white flex items-center px-3 py-1 rounded-md">
-                    <CheckCircle size={14} className="mr-1" />
-                    Completed
-                  </Badge>
-                ) : (
-                  <Badge className="bg-red-500 text-white flex items-center px-3 py-1 rounded-md">
-                    <XCircle size={14} className="mr-1" />
-                    Pending
-                  </Badge>
-                )}
-              </div>
+          <div className="space-y-4 max-h-[70vh] overflow-y-scroll">
+            {recentOrder?.map((order, index) => (
+              <div
+                key={index}
+                className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700"
+              >
+                <div className="flex justify-between items-center">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                    Order #{order.OrderID}
+                  </h3>
+                  {order.OrderCompleted === "Yes" ? (
+                    <Badge className="bg-green-500 text-white flex items-center px-3 py-1 rounded-md">
+                      <CheckCircle size={14} className="mr-1" />
+                      Completed
+                    </Badge>
+                  ) : (
+                    <Badge className="bg-red-500 text-white flex items-center px-3 py-1 rounded-md">
+                      <XCircle size={14} className="mr-1" />
+                      Pending
+                    </Badge>
+                  )}
+                </div>
 
-              <div className="mt-2 text-gray-600 dark:text-gray-300 text-sm">
-                <p>
-                  <span className="font-semibold">Customer:</span>{" "}
-                  {order.CustomerName}
-                </p>
-                <p>
-                  <span className="font-semibold">Date:</span>{" "}
-                  {order.OrderDate.toString()}
-                </p>
-                <p>
-                  <span className="font-semibold">Total:</span> ₹
-                  {parseFloat(order.TotalAmount).toLocaleString()}
-                </p>
-                <p>
-                  <span className="font-semibold">Paid:</span> ₹
-                  {parseFloat(order.AmountPaid).toLocaleString()}
-                </p>
+                <div className="mt-2 text-gray-600 dark:text-gray-300 text-sm">
+                  <p>
+                    <span className="font-semibold">Customer:</span>{" "}
+                    {order.CustomerName}
+                  </p>
+                  <p>
+                    <span className="font-semibold">Date:</span>{" "}
+                    {order.OrderDate.toString()}
+                  </p>
+                  <p>
+                    <span className="font-semibold">Total:</span> ₹
+                    {parseFloat(order.TotalAmount).toLocaleString()}
+                  </p>
+                  <p>
+                    <span className="font-semibold">Paid:</span> ₹
+                    {parseFloat(order.AmountPaid).toLocaleString()}
+                  </p>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
-    </section>
-  );
+      </section>
+    );
+  else if (pathname == "/sale/history") return <SalesHistory />;
 };
 
 export default Sale;

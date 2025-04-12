@@ -271,7 +271,7 @@ const ApproveData = () => {
       </Dialog>
 
       <h3 className="text-lg">
-        <span className="font-bold text-red-500">Import</span> Data
+        <span className="font-bold text-red-500">Approve </span> Data
       </h3>
       <div className="w-full flex flex-col items-center justify-center">
         <div className="flex items-center mb-2 ">

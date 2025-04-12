@@ -6,7 +6,7 @@ import ExportData from "./export";
 const Data = () => {
   const { pathname } = useLocation();
 
-  if (pathname == "/data/import") {
+  if (pathname == "/data/import" || pathname == "/data") {
     return <ImportData />;
   } else if (pathname == "/data/approve") {
     return <ApproveData />;

@@ -22,7 +22,7 @@ const Inventory = () => {
   if (!context) {
     return <Loading />;
   }
-
+  console.log(pathname);
   const { brandCategories, brands, isLoading, parts, setParts } = context;
 
   const catChangeHandler = (cat_id: number) => {
@@ -67,7 +67,7 @@ const Inventory = () => {
     catChangeHandler(catID);
   }, [parts]);
 
-  if (pathname == "/inventory/bcategory") {
+  if (pathname == "/inventory/bcategory" || pathname == "/inventory") {
     return (
       <Card>
         <CardHeader className="flex-row w-full items-center justify-between border-b">

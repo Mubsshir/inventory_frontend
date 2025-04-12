@@ -10,7 +10,6 @@ import Consumer from "./components/pages/consumer/page";
 import Inventory from "./components/pages/inventory/page";
 import Data from "./components/pages/dataupload/page";
 import Sale from "./components/pages/sales/page";
-import SalesHistory from "./components/pages/sales_history/page";
 
 function App() {
   const context = useContext(Store);
@@ -37,21 +36,20 @@ function App() {
         {/* Redirect to dashboard */}
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="consumers" element={<Consumer />} />
-        <Route path="inventory">
+        <Route path="inventory" element={<Inventory />}>
           <Route element={<Navigate to="/bcategory" />} />
           {/* Default sub-route */}
           <Route path="bcategory" element={<Inventory />} />
           <Route path="brands" element={<Inventory />} />
           <Route path="stocks" element={<Inventory />} />
         </Route>
-        <Route path="sale">
+        <Route path="sale" element={<Sale />}>
           <Route element={<Navigate to="/add-sale" />} />
           {/* Default sub-route */}
           <Route path="add-sale" element={<Sale />} />
-          <Route path="history" element={<SalesHistory />} />
-          <Route path="reports" element={<Consumer />} />
+          <Route path="history" element={<Sale />} />
         </Route>
-        <Route path="data">
+        <Route path="data" element={<Data />}>
           <Route element={<Navigate to="/import" />} />
           {/* Default sub-route */}
           <Route path="import" element={<Data />} />

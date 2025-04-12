@@ -84,7 +84,7 @@ const ExportData = () => {
   return (
     <section className=" space-y-2">
       <h3 className="text-lg">
-        <span className="font-bold text-red-500">Import</span> Data
+        <span className="font-bold text-red-500">Export/Download </span> Data
       </h3>
       <div className="w-full flex flex-col items-center justify-center">
         <div className="flex items-center mb-2 ">
