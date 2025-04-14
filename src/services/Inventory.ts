@@ -1,4 +1,4 @@
-const BACK_API: string = import.meta.env.VITE_LOCAL_URL; // URL of backend
+const BACK_API: string = import.meta.env.VITE_API_URL; // URL of backend
 import { Brand, BrandCategory } from "@/store/Store";
 import { getHeaders } from "./getHeader";
 import { Item } from "@/components/pages/inventory/columns";

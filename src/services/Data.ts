@@ -1,5 +1,5 @@
 import { getHeaders } from "./getHeader";
-const BACK_API: string = import.meta.env.VITE_LOCAL_URL;
+const BACK_API: string = import.meta.env.VITE_API_URL;
 
 export type FileList = {
   code: string;
