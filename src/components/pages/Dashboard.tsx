@@ -151,6 +151,7 @@ const Dashboard = () => {
                     return (
                       // this is subsection
                       <div
+                        key={index}
                         className={` ${itm.size} sm:w-full lg-flex-row space-y-1 sm:flex-col border  border-b-2 border-b-red-400 shadow-md p-4 rounded-lg `}
                       >
                         <h3 className="font-semibold text-lg ">{itm.info}</h3>

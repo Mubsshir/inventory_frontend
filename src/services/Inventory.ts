@@ -32,6 +32,69 @@ export const getBrandCategory = async (): Promise<InventoryResponse> => {
   }
 };
 
+export const saveNewCategory = async (
+  cat_data: FormData
+): Promise<InventoryResponse> => {
+  try {
+    const res = await fetch(`${BACK_API}/Category`, {
+      method: "POST",
+      headers: getHeaders(),
+      body: cat_data,
+    });
+    const data = await res.json();
+
+    console.log(res.status);
+    if (res.ok) {
+      return { status: data.status, message: data.message };
+    }
+    return { status: "error", data: undefined, message: "Somthing went wrong" };
+  } catch (err) {
+    return { status: "error", data: undefined, message: err };
+  }
+};
+
+export const saveNewItem = async (
+  itemdata: Object
+): Promise<InventoryResponse> => {
+  try {
+    const res = await fetch(`${BACK_API}/saveItem`, {
+      method: "POST",
+      headers: { ...getHeaders(), "Content-type": "application/json" },
+      body: JSON.stringify(itemdata),
+    });
+    const data = await res.json();
+
+    console.log(res.status);
+    if (res.ok) {
+      return { status: data.status, message: data.message };
+    }
+    return { status: "error", data: undefined, message: "Somthing went wrong" };
+  } catch (err) {
+    return { status: "error", data: undefined, message: err };
+  }
+};
+
+export const saveNewBrand = async (
+  cat_data: FormData
+): Promise<InventoryResponse> => {
+  try {
+    const res = await fetch(`${BACK_API}/Brand`, {
+      method: "POST",
+      headers: getHeaders(),
+      body: cat_data,
+    });
+    const data = await res.json();
+
+    console.log(res.status);
+    if (res.ok) {
+      return { status: data.status, message: data.message };
+    }
+    return { status: "error", data: undefined, message: "Somthing went wrong" };
+  } catch (err) {
+    return { status: "error", data: undefined, message: err };
+  }
+};
+
 export const getBrands = async (): Promise<InventoryResponse> => {
   try {
     const res = await fetch(BACK_API + "/brands", {

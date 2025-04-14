@@ -25,6 +25,8 @@ type StoreTypes = {
   parts: Item[] | undefined;
   fetchParts: Function;
   setParts: React.Dispatch<Item[]>;
+  fetchBrandCategory: Function;
+  fetchBrands: Function;
 };
 
 export type userData = {
@@ -185,8 +187,10 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
         fetchConsumer,
         brandCategories,
         setBrandCategories,
+        fetchBrandCategory,
         brands,
         setBrands,
+        fetchBrands,
         parts,
         fetchParts,
         setParts,

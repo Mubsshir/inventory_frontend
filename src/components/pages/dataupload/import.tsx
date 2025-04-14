@@ -79,7 +79,7 @@ const ImportData = () => {
       const file = await getExcelFormat(
         (selectedFileInfo && selectedFileInfo.code) || "0"
       );
-
+      setIsLoading(false);
       const url = window.URL.createObjectURL(new Blob([file]));
       const link = document.createElement("a");
       link.href = url;
@@ -93,6 +93,7 @@ const ImportData = () => {
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
+
       setIsLoading(false);
     } catch (err) {
       setIsLoading(false);
@@ -318,7 +319,7 @@ const ImportData = () => {
           <Button
             className="bg-red-500"
             onClick={downloadFileHandler}
-            disabled={loading}
+           
           >
             Download Format <DownloadIcon />
           </Button>
