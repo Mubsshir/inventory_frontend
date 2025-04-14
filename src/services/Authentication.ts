@@ -1,5 +1,5 @@
 // Assuming BACK_API URL is coming from environment variables
-const BACK_API: string = import.meta.env.VITE_API_URL; // URL of backend
+const BACK_API: string = import.meta.env.VITE_LOCAL_URL; // URL of backend
 import { userData } from "@/store/Store";
 import Cookies from "js-cookie";
 import { getHeaders } from "./getHeader";
