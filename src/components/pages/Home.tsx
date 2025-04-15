@@ -19,7 +19,7 @@ const Home = () => {
       <AppSidebar />
       <main className="w-full h-dvh">
         <Header username={user?.fullname || "Guest"} />
-        <section className=" overflow-hidden h-[90%] w-full px-2 mt-3 ">
+        <section className=" overflow-hidden lg:overflow-hidden  h-[90%] w-full px-2 mt-3 ">
           <Outlet />
         </section>
       </main>

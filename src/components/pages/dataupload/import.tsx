@@ -271,11 +271,11 @@ const ImportData = () => {
         </DialogContent>
       </Dialog>
 
-      <h3 className="text-lg">
+      <h3 className="text-lg mb-3">
         <span className="font-bold text-red-500">Import</span> Data
       </h3>
-      <div className="w-full flex flex-col items-center justify-center">
-        <div className="flex items-center mb-2 ">
+      <div className="w-full flex flex-col items-start sm:mt-0  sm:items-center sm:justify-start">
+        <div className=" sm:items-center mb-2 flex  flex-col sm:flex-row space-y-2 items-start justify-start">
           <h3 className="text-sm mr-2">Select Data For Import</h3>
           <Select
             onValueChange={(value) => {
@@ -308,7 +308,7 @@ const ImportData = () => {
             </SelectContent>
           </Select>
         </div>
-        <div className="flex items-center space-x-2 justify-center w-full mt-3">
+        <div className="flex flex-col space-y-2 sm:flex-row sm:items-center items-start sm:space-x-2  sm:justify-center w-full mt-3">
           <Input
             className="w-[280px]  "
             id="excel"
@@ -316,15 +316,11 @@ const ImportData = () => {
             accept=".xlsx"
             onChange={handleFileChange}
           />
-          <Button
-            className="bg-red-500"
-            onClick={downloadFileHandler}
-           
-          >
+          <Button className="bg-red-500" onClick={downloadFileHandler}>
             Download Format <DownloadIcon />
           </Button>
         </div>
-        <div className="flex items-center space-x-2 justify-center w-full mt-3">
+        <div className="flex sm:flex-row sm:items-center items-start space-x-2 justify-start w-full mt-3 sm:justify-center">
           <Button
             className="bg-green-500"
             onClick={handleFileUpload}

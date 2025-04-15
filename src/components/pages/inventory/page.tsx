@@ -286,8 +286,8 @@ const Inventory = () => {
 
   if (pathname == "/inventory/bcategory" || pathname == "/inventory") {
     return (
-      <Card className="relative ">
-        <CardHeader className=" relative flex-row w-full items-center justify-between border-b ">
+      <Card className="relative w-full  ">
+        <CardHeader className="relative flex-row w-full items-center justify-between border-b ">
           <CardTitle className=" relative w-full flex justify-between items-center ">
             <h3>Brand Categories</h3>
             <Popover
@@ -383,12 +383,12 @@ const Inventory = () => {
           </CardTitle>
         </CardHeader>
 
-        <CardContent className="flex flex-wrap justify-around mt-5 ">
+        <CardContent className="flex w-full flex-wrap h-[620px]  justify-around pt-2 overflow-y-scroll">
           {brandCategories?.map((bcat) => {
             return (
               <Card
                 key={bcat.brand_catid}
-                className=" overflow-hidden w-40 m-2 space-y-4"
+                className="  w-40 h-48 m-2 space-y-4 rounded-md overflow-hidden"
               >
                 <CardHeader className="bg-red-500  text-white p-3 ">
                   <CardTitle className="text-center">
@@ -503,20 +503,20 @@ const Inventory = () => {
           </CardTitle>
         </CardHeader>
 
-        <CardContent className=" flex justify-center mx-auto h-auto mt-5 overflow-y-scroll scroll-smooth ">
-          <div className="flex flex-wrap">
+        <CardContent className=" flex justify-center mx-auto h-auto mt-5  scroll-smooth ">
+          <div className=" flex w-full flex-wrap h-[620px]  justify-around pt-2 overflow-y-scroll">
             {brands?.map((bcat, index) => {
               return (
                 <Card
                   key={index}
-                  className=" overflow-hidden w-40 m-2 space-y-4"
+                  className=" overflow-hidden w-40 h-44 m-2 space-y-4"
                 >
                   <CardHeader className="bg-red-500  text-white p-3 ">
                     <CardTitle className="text-center">
                       {bcat.brand_name}
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="w-40 h-28 object-cover">
+                  <CardContent className="w-40 h-28 object-cover flex justify-center align-middle">
                     <img src={BACK_API + bcat.image_path} className="w-full" />
                   </CardContent>
                 </Card>

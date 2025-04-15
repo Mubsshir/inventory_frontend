@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useCallback, useState } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
+
 import {
   ChartConfig,
   ChartContainer,
@@ -107,10 +109,11 @@ const Dashboard = () => {
       ],
     ],
   });
+  const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
-
   const fetchDashBoardData = useCallback(async () => {
+    setLoading(true);
     try {
       const res = await getDashboardData();
 
@@ -122,16 +125,41 @@ const Dashboard = () => {
         });
       } else if (res.status == "401") {
         navigate("/login");
-        return;
       }
     } catch (err) {
       console.log(err);
+    } finally {
+      setLoading(false);
     }
   }, []);
 
   useEffect(() => {
     fetchDashBoardData();
   }, []);
+
+  if (loading) {
+    return (
+      <div className="w-full h-full overflow-y-scroll space-y-4 p-4">
+        {[1, 2, 3].map((i) => (
+          <Card key={i} className="w-full">
+            <CardHeader className="px-4">
+              <Skeleton className="h-6 w-1/3 bg-gray-300" />
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {[...Array(3)].map((_, j) => (
+                  <div key={j} className="space-y-2">
+                    <Skeleton className="h-6 w-3/4 bg-gray-200" />
+                    <Skeleton className="h-40 w-full rounded-md bg-gray-200" />
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div className="w-full h-full overflow-y-scroll space-y-2">

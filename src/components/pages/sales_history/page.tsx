@@ -12,6 +12,8 @@ import { CheckCircle, XCircle } from "lucide-react";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "./data-table";
 import SaleDetails from "./sales-dtl";
+import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const SalesHistory = () => {
   const [recentOrder, setRecentOrder] = useState<OrderDetail[]>([]);
@@ -39,7 +41,6 @@ const SalesHistory = () => {
   const fetchOrderDetails = useCallback(async (orderID: string) => {
     setLoading(true);
     const res = await getOrderDetails(orderID);
-    console.log(res);
     if (res?.status == "success") {
       setOrderData(res.data);
     }
@@ -119,20 +120,43 @@ const SalesHistory = () => {
         <h2 className="text-2xl font-bold text-red-600 dark:text-red-400 mb-4">
           Order History
         </h2>
+        {loading ? (
+          <div className="w-full h-full overflow-y-scroll space-y-4 p-4">
+            {[1, 2, 3].map((i) => (
+              <Card key={i} className="w-full">
+                <CardHeader className="px-4">
+                  <Skeleton className="h-6 w-1/3 bg-gray-300" />
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {[...Array(3)].map((_, j) => (
+                      <div key={j} className="space-y-2">
+                        <Skeleton className="h-6 w-3/4 bg-gray-200" />
+                        <Skeleton className="h-40 w-full rounded-md bg-gray-200" />
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        ) : orderData? (
+          <>
+            <Input
+              type="text"
+              placeholder="Search by Order ID or Customer Name..."
+              className="mb-4 w-full max-w-md p-2 border border-gray-300 dark:border-gray-700 rounded-lg"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
 
-        <Input
-          type="text"
-          placeholder="Search by Order ID or Customer Name..."
-          className="mb-4 w-full max-w-md p-2 border border-gray-300 dark:border-gray-700 rounded-lg"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-
-        <DataTable
-          columns={columns}
-          data={filteredOrders}
-          onRowClick={handleRowClick}
-        />
+            <DataTable
+              columns={columns}
+              data={filteredOrders}
+              onRowClick={handleRowClick}
+            />
+          </>
+        ):<h3>No History Found</h3>}
       </div>
 
       {selectedOrder.OrderID !== "" && !loading && (

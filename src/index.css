@@ -4,6 +4,19 @@
 
 /* ... */
 
+.mbLogin {
+  background-image: url("../public/mobileinventory.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+.pcLogin {
+  background-image: url("../public/inventorymanager.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -163,8 +176,6 @@
   animation: slideDown 0.3s ease-out;
 }
 
-
-
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -218,9 +229,8 @@
     --chart-3: 350 80% 72%;
     --chart-4: 351 83% 82%;
     --chart-5: 352 83% 91%;
-    }
+  }
 }
-
 
 .hideScroll::-webkit-scrollbar {
   display: none;

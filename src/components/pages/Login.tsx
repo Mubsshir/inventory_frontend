@@ -3,7 +3,15 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import SideImage from "/invent.jpg";
+
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../ui/card";
 import {
   Form,
   FormControl,
@@ -72,62 +80,91 @@ const Login = () => {
     }, 3000);
   }, [setError]);
   return (
-    <div className="w-full h-lvh flex items-center  justify-center">
-      <Card className="w-96 mx-auto h-fit">
-        <CardHeader>
-          <CardTitle className="text-center">Login to your Account</CardTitle>
-          <CardContent className="p-0 ">
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-4   rounded-sm mt-3"
-              >
-                <FormField
-                  control={form.control}
-                  name="username"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Username</FormLabel>
-                      <FormControl>
-                        <Input placeholder="shadcn" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Password</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Enter your password"
-                          type="password"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <Button
-                  className={`disabled:cursor-wait  bg-red-500 w-full  `}
-                  type="submit"
-                  disabled={isLoading}
+    <section className="w-full min-h-screen flex items-center justify-center bg-gray-100 px-4">
+      <div className="w-full max-w-5xl flex bg-white rounded-xl overflow-hidden ">
+        {/* Image Section */}
+        <div className="w-1/2 hidden md:block bg-gray-200">
+          <img
+            src={SideImage}
+            alt="Side"
+            className="w-full h-full object-cover"
+          />
+        </div>
+
+        {/* Form Section */}
+        <div className="w-full md:w-1/2 md:p-8 sm:p-2 flex flex-col justify-center items-center">
+          <h2 className="md:text-3xl text-xl mb-5 font-extralight">
+            <span className="font-extrabold text-red-500">Inventory</span>{" "}
+            Mangement System
+          </h2>
+          <Card className="w-full max-w-md">
+            <CardHeader>
+              <CardTitle className="text-left">
+                Welcome to{" "}
+                <span className="text-red-500">Inventory Manger</span>
+              </CardTitle>
+              <CardDescription>
+                Please enter your <strong>Username</strong> and{" "}
+                <strong>Password</strong> to continue.
+              </CardDescription>
+            </CardHeader>
+
+            <CardContent>
+              <Form {...form}>
+                <form
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className="space-y-4"
                 >
-                  Login
-                </Button>
-                {error.length > 0 && (
-                  <h3 className="font-bold text-red-600">{error}</h3>
-                )}
-              </form>
-            </Form>
-          </CardContent>
-        </CardHeader>
-      </Card>
-    </div>
+                  <FormField
+                    control={form.control}
+                    name="username"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Username</FormLabel>
+                        <FormControl>
+                          <Input placeholder="username" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Password</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter your password"
+                            type="password"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <Button
+                    className="bg-red-500 w-full"
+                    type="submit"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? "Logging in..." : "Login"}
+                  </Button>
+
+                  {error && (
+                    <p className="text-sm text-red-600 font-medium">{error}</p>
+                  )}
+                </form>
+              </Form>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </section>
   );
 };
 
