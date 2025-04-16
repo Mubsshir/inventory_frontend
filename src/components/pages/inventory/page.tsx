@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Loading from "@/components/ui/Loading";
 import { Store } from "@/store/Store";
 import { useContext, useEffect, useState } from "react";
-const BACK_API: string = import.meta.env.VITE_LOCAL_URL;
+const BACK_API: string = import.meta.env.VITE_API_URL;
 import { useLocation } from "react-router";
 import { DataTable } from "./data-table";
 import { columns, Item } from "./columns";
@@ -52,6 +52,8 @@ const formSchemaBrand = z.object({
   brand_image: z.any(),
 });
 
+
+
 const formSchemaItem = z.object({
   name: z.string().min(3, {
     message: "Item name must be at least 3 characters.",
@@ -64,6 +66,7 @@ const formSchemaItem = z.object({
 });
 
 const Inventory = () => {
+  console.log(BACK_API)
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {

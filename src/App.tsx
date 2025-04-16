@@ -18,6 +18,7 @@ function App() {
   }
 
   const { isAuth, isLoading } = context;
+  
   if (isLoading) {
     return <Loading />;
   }

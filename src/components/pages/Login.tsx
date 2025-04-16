@@ -45,6 +45,7 @@ const Login = () => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [tip, setTip] = useState("");
   const context = useContext(Store);
 
   const navigate = useNavigate();
@@ -53,34 +54,88 @@ const Login = () => {
   }
 
   const { setIsAuth, setUser } = context;
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    try {
-      setIsLoading && setIsLoading(true);
-      const result = await authenticateUser(values.username, values.password);
-      console.log(result);
-      if (result.status === "success") {
-        setIsAuth && setIsAuth(true);
-        setUser && setUser(result.userData);
-        navigate("/");
-        return;
+    const maxAttempts = 6;
+    const delay = 2000; // 8 seconds
+    let attempt = 1;
+
+    setIsLoading(true);
+    setError(""); // clear any previous errors
+
+    while (attempt <= maxAttempts) {
+      try {
+        const result = await authenticateUser(values.username, values.password);
+
+        if (result.status === "success") {
+          setIsAuth && setIsAuth(true);
+          setUser && setUser(result.userData);
+          navigate("/");
+          return;
+        }
+
+        // failed attempt
+        setError(`Attempt ${attempt} failed: ${result.message}`);
+      } catch (err) {
+        setError(`Attempt ${attempt} failed: Something went wrong.`);
       }
-      setError(result.message);
-      setIsLoading && setIsLoading(false);
-      return;
-    } catch (err) {
-      setError("Somthing Went Wrong.");
-      setIsLoading && setIsLoading(false);
-      setIsAuth && setIsAuth(true);
+
+      if (attempt > 1) {
+        setTip(
+          "💡 Tip: The backend is hosted on Azure. If the service was idle, it may take a few seconds to respond. Please wait, or let the system retry a few times automatically."
+        );
+      }
+      attempt++;
+
+      if (attempt <= maxAttempts) {
+        setError(`Attempt: ${attempt} Auto Retrying 🌏 ...`);
+        await new Promise((resolve) => setTimeout(resolve, delay));
+      }
     }
+
+    // All attempts failed
+    setIsLoading(false);
+    setError(
+      `Login failed after ${maxAttempts} attempts. Please try again later.`
+    );
   }
+
+  // const { setIsAuth, setUser } = context;
+  // async function onSubmit(values: z.infer<typeof formSchema>) {
+  //   try {
+  //     setIsLoading && setIsLoading(true);
+  //     const result = await authenticateUser(values.username, values.password);
+  //     console.log(result);
+  //     if (result.status === "success") {
+  //       setIsAuth && setIsAuth(true);
+  //       setUser && setUser(result.userData);
+  //       navigate("/");
+  //       return;
+  //     }
+  //     setError(result.message);
+  //     setIsLoading && setIsLoading(false);
+  //     return;
+  //   } catch (err) {
+  //     setError("Somthing Went Wrong.");
+  //     setIsLoading && setIsLoading(false);
+  //     setIsAuth && setIsAuth(true);
+  //   }
+  // }
 
   useEffect(() => {
     setTimeout(() => {
       setError("");
     }, 3000);
   }, [setError]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setTip("");
+    }, 9000);
+  }, [setTip]);
+
   return (
-    <section className="w-full min-h-screen flex items-center justify-center bg-gray-100 px-4">
+    <section className="w-full min-h-screen flex-col flex items-center justify-center bg-gray-100 px-4">
       <div className="w-full max-w-5xl flex bg-white rounded-xl overflow-hidden ">
         {/* Image Section */}
         <div className="w-1/2 hidden md:block bg-gray-200">
@@ -93,6 +148,7 @@ const Login = () => {
 
         {/* Form Section */}
         <div className="w-full md:w-1/2 md:p-8 sm:p-2 flex flex-col justify-center items-center">
+          {}
           <h2 className="md:text-3xl text-xl mb-5 font-extralight">
             <span className="font-extrabold text-red-500">Inventory</span>{" "}
             Mangement System
@@ -157,6 +213,11 @@ const Login = () => {
 
                   {error && (
                     <p className="text-sm text-red-600 font-medium">{error}</p>
+                  )}
+                  {tip.length > 0 && (
+                    <p className="text-sm text-muted-foreground mt-2 font-bold">
+                      {tip}
+                    </p>
                   )}
                 </form>
               </Form>

@@ -44,8 +44,7 @@ export const authenticateUser = async (
       return { status: "401", message: "Unauthorized, Please login again." };
     }
   } catch (err) {
-    console.error(err);
-    return { status: "401", message: "Session Expired, Please Login Again." };
+    return { status: "401", message:"Somthing went wrong"};
   }
 };
 
