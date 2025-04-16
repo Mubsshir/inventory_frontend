@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Loading from "@/components/ui/Loading";
 import { Store } from "@/store/Store";
 import { useContext, useEffect, useState } from "react";
-const BACK_API: string = import.meta.env.VITE_API_URL;
+const BACK_API: string = import.meta.env.VITE_BLOB_URL;
 import { useLocation } from "react-router";
 import { DataTable } from "./data-table";
 import { columns, Item } from "./columns";
@@ -52,8 +52,6 @@ const formSchemaBrand = z.object({
   brand_image: z.any(),
 });
 
-
-
 const formSchemaItem = z.object({
   name: z.string().min(3, {
     message: "Item name must be at least 3 characters.",
@@ -66,7 +64,7 @@ const formSchemaItem = z.object({
 });
 
 const Inventory = () => {
-  console.log(BACK_API)
+  console.log(BACK_API);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -109,6 +107,7 @@ const Inventory = () => {
   }
 
   const {
+    user,
     fetchBrandCategory,
     brandCategories,
     brands,
@@ -293,96 +292,98 @@ const Inventory = () => {
         <CardHeader className="relative flex-row w-full items-center justify-between border-b ">
           <CardTitle className=" relative w-full flex justify-between items-center ">
             <h3>Brand Categories</h3>
-            <Popover
-              open={isOpen}
-              onOpenChange={() => {
-                setIsOpen(!isOpen);
-              }}
-            >
-              <PopoverTrigger asChild>
-                <Button>Add New Category</Button>
-              </PopoverTrigger>
-              <PopoverContent className=" relative sm:relative mx-auto  md:right-3 sm:right-11  right-3 w-[320px] md:w-[420px] ">
-                <div className="grid gap-4">
-                  <div className="space-y-2">
-                    <h4 className="font-medium leading-none text-red-500">
-                      Create New Category
-                    </h4>
-                  </div>
-                  <Form {...form}>
-                    <form onSubmit={form.handleSubmit(addCatHandler)}>
-                      <FormField
-                        control={form.control}
-                        name="name"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Category Name</FormLabel>
-                            <FormControl>
-                              <Input placeholder="Category name" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="description"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Category description</FormLabel>
-                            <FormControl>
-                              <Input
-                                placeholder="Category description"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+            {user?.role == "Admin" && (
+              <Popover
+                open={isOpen}
+                onOpenChange={() => {
+                  setIsOpen(!isOpen);
+                }}
+              >
+                <PopoverTrigger asChild>
+                  <Button>Add New Category</Button>
+                </PopoverTrigger>
+                <PopoverContent className=" relative sm:relative mx-auto  md:right-3 sm:right-11  right-3 w-[320px] md:w-[420px] ">
+                  <div className="grid gap-4">
+                    <div className="space-y-2">
+                      <h4 className="font-medium leading-none text-red-500">
+                        Create New Category
+                      </h4>
+                    </div>
+                    <Form {...form}>
+                      <form onSubmit={form.handleSubmit(addCatHandler)}>
+                        <FormField
+                          control={form.control}
+                          name="name"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Category Name</FormLabel>
+                              <FormControl>
+                                <Input placeholder="Category name" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="description"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Category description</FormLabel>
+                              <FormControl>
+                                <Input
+                                  placeholder="Category description"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
 
-                      <div className="flex items-center">
-                        <div className="flex flex-col space-y-2 justify-between align-middle">
-                          <div className="p-2 border rounded-lg">
-                            <FormField
-                              control={form.control}
-                              name="category_image"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Choose Category Image</FormLabel>
-                                  <FormControl>
-                                    <Input
-                                      {...field}
-                                      onChange={fileChangeHandler}
-                                      type="file"
-                                      name="category_image"
-                                      placeholder="Choose Image for Category"
-                                      accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
-                                    />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
+                        <div className="flex items-center">
+                          <div className="flex flex-col space-y-2 justify-between align-middle">
+                            <div className="p-2 border rounded-lg">
+                              <FormField
+                                control={form.control}
+                                name="category_image"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Choose Category Image</FormLabel>
+                                    <FormControl>
+                                      <Input
+                                        {...field}
+                                        onChange={fileChangeHandler}
+                                        type="file"
+                                        name="category_image"
+                                        placeholder="Choose Image for Category"
+                                        accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
+                                      />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                            </div>
+                            <Button type="submit" className="w-full self-end">
+                              Save Category
+                            </Button>
+                          </div>
+
+                          <div className="w-[150px] h-[150px] p-3 mt-3  mb-3 flex justify-center align-middle">
+                            <img
+                              src={image}
+                              alt="preview"
+                              className="w-full h-full object-scale-down rounded-lg  "
                             />
                           </div>
-                          <Button type="submit" className="w-full self-end">
-                            Save Category
-                          </Button>
                         </div>
-
-                        <div className="w-[150px] h-[150px] p-3 mt-3  mb-3 flex justify-center align-middle">
-                          <img
-                            src={image}
-                            alt="preview"
-                            className="w-full h-full object-scale-down rounded-lg  "
-                          />
-                        </div>
-                      </div>
-                    </form>
-                  </Form>
-                </div>
-              </PopoverContent>
-            </Popover>
+                      </form>
+                    </Form>
+                  </div>
+                </PopoverContent>
+              </Popover>
+            )}
           </CardTitle>
         </CardHeader>
 
@@ -413,96 +414,98 @@ const Inventory = () => {
         <CardHeader className=" relative flex-row w-full items-center justify-between border-b ">
           <CardTitle className=" relative w-full flex justify-between items-center ">
             <h3>Brands</h3>
-            <Popover
-              open={isOpen}
-              onOpenChange={() => {
-                setIsOpen(!isOpen);
-              }}
-            >
-              <PopoverTrigger asChild>
-                <Button>Add New Brand</Button>
-              </PopoverTrigger>
-              <PopoverContent className=" relative sm:relative mx-auto  md:right-3 sm:right-11  right-3 w-[320px] md:w-[420px] ">
-                <div className="grid gap-4">
-                  <div className="space-y-2">
-                    <h4 className="font-medium leading-none text-red-500">
-                      Add New Brand in Inventory
-                    </h4>
-                  </div>
-                  <Form {...formBrand}>
-                    <form onSubmit={formBrand.handleSubmit(addBrandHandler)}>
-                      <FormField
-                        control={formBrand.control}
-                        name="name"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Brand Name</FormLabel>
-                            <FormControl>
-                              <Input placeholder="Brand name" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={formBrand.control}
-                        name="description"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Brand description</FormLabel>
-                            <FormControl>
-                              <Input
-                                placeholder="Brand description"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+            {user?.role == "Admin" && (
+              <Popover
+                open={isOpen}
+                onOpenChange={() => {
+                  setIsOpen(!isOpen);
+                }}
+              >
+                <PopoverTrigger asChild>
+                  <Button>Add New Brand</Button>
+                </PopoverTrigger>
+                <PopoverContent className=" relative sm:relative mx-auto  md:right-3 sm:right-11  right-3 w-[320px] md:w-[420px] ">
+                  <div className="grid gap-4">
+                    <div className="space-y-2">
+                      <h4 className="font-medium leading-none text-red-500">
+                        Add New Brand in Inventory
+                      </h4>
+                    </div>
+                    <Form {...formBrand}>
+                      <form onSubmit={formBrand.handleSubmit(addBrandHandler)}>
+                        <FormField
+                          control={formBrand.control}
+                          name="name"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Brand Name</FormLabel>
+                              <FormControl>
+                                <Input placeholder="Brand name" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={formBrand.control}
+                          name="description"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Brand description</FormLabel>
+                              <FormControl>
+                                <Input
+                                  placeholder="Brand description"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
 
-                      <div className="flex items-center">
-                        <div className="flex flex-col space-y-2 justify-between align-middle">
-                          <div className="p-2 border rounded-lg">
-                            <FormField
-                              control={formBrand.control}
-                              name="brand_image"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Choose Brand Image</FormLabel>
-                                  <FormControl>
-                                    <Input
-                                      {...field}
-                                      onChange={fileChangeHandler}
-                                      type="file"
-                                      name="brand_image"
-                                      placeholder="Choose Image for Brand"
-                                      accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
-                                    />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
+                        <div className="flex items-center">
+                          <div className="flex flex-col space-y-2 justify-between align-middle">
+                            <div className="p-2 border rounded-lg">
+                              <FormField
+                                control={formBrand.control}
+                                name="brand_image"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Choose Brand Image</FormLabel>
+                                    <FormControl>
+                                      <Input
+                                        {...field}
+                                        onChange={fileChangeHandler}
+                                        type="file"
+                                        name="brand_image"
+                                        placeholder="Choose Image for Brand"
+                                        accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
+                                      />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                            </div>
+                            <Button type="submit" className="w-full self-end">
+                              Save Brand
+                            </Button>
+                          </div>
+
+                          <div className="w-[150px] h-[150px] p-3 mt-3  mb-3 flex justify-center align-middle">
+                            <img
+                              src={image}
+                              alt="preview"
+                              className="w-full h-full object-scale-down rounded-lg  "
                             />
                           </div>
-                          <Button type="submit" className="w-full self-end">
-                            Save Brand
-                          </Button>
                         </div>
-
-                        <div className="w-[150px] h-[150px] p-3 mt-3  mb-3 flex justify-center align-middle">
-                          <img
-                            src={image}
-                            alt="preview"
-                            className="w-full h-full object-scale-down rounded-lg  "
-                          />
-                        </div>
-                      </div>
-                    </form>
-                  </Form>
-                </div>
-              </PopoverContent>
-            </Popover>
+                      </form>
+                    </Form>
+                  </div>
+                </PopoverContent>
+              </Popover>
+            )}
           </CardTitle>
         </CardHeader>
 
@@ -535,131 +538,133 @@ const Inventory = () => {
         <div className="px-2 mb-3">
           <CardTitle className=" relative w-full flex justify-between items-center ">
             <h3>Availabe Stock</h3>
-            <Popover
-              open={isOpen}
-              onOpenChange={() => {
-                setIsOpen(!isOpen);
-              }}
-            >
-              <PopoverTrigger asChild>
-                <Button>Add New Item</Button>
-              </PopoverTrigger>
-              <PopoverContent className=" relative sm:relative mx-auto  md:right-3 sm:right-11  right-3 w-[320px] md:w-[420px] ">
-                <div className="grid gap-4">
-                  <div className="space-y-2">
-                    <h4 className="font-medium leading-none text-red-500">
-                      Add New Item in Inventory
-                    </h4>
-                  </div>
-                  <Form {...formItem}>
-                    <form onSubmit={formItem.handleSubmit(addItemHandler)}>
-                      <FormField
-                        control={formItem.control}
-                        name="name"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Item Name</FormLabel>
-                            <FormControl>
-                              <Input placeholder="Item name" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={formItem.control}
-                        name="code"
-                        render={({ field }) => (
-                          <FormItem className="my-2">
-                            <FormLabel>Item Code</FormLabel>
-                            <FormControl>
-                              <Input placeholder="Item Code" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <Label>Select Brand</Label>
-                      <select
-                        name="brand"
-                        id="brand"
-                        className="w-full outline-0 border rounded-lg py-2 px-1 my-2"
-                      >
-                        <option value="-1" className="font-bold">
-                          Select Brand
-                        </option>
-                        {brands?.map((brand, idx) => (
-                          <option key={idx} value={brand.brand_id}>
-                            {brand.brand_name}
+            {user?.role == "Admin" && (
+              <Popover
+                open={isOpen}
+                onOpenChange={() => {
+                  setIsOpen(!isOpen);
+                }}
+              >
+                <PopoverTrigger asChild>
+                  <Button>Add New Item</Button>
+                </PopoverTrigger>
+                <PopoverContent className=" relative sm:relative mx-auto  md:right-3 sm:right-11  right-3 w-[320px] md:w-[420px] ">
+                  <div className="grid gap-4">
+                    <div className="space-y-2">
+                      <h4 className="font-medium leading-none text-red-500">
+                        Add New Item in Inventory
+                      </h4>
+                    </div>
+                    <Form {...formItem}>
+                      <form onSubmit={formItem.handleSubmit(addItemHandler)}>
+                        <FormField
+                          control={formItem.control}
+                          name="name"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Item Name</FormLabel>
+                              <FormControl>
+                                <Input placeholder="Item name" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={formItem.control}
+                          name="code"
+                          render={({ field }) => (
+                            <FormItem className="my-2">
+                              <FormLabel>Item Code</FormLabel>
+                              <FormControl>
+                                <Input placeholder="Item Code" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <Label>Select Brand</Label>
+                        <select
+                          name="brand"
+                          id="brand"
+                          className="w-full outline-0 border rounded-lg py-2 px-1 my-2"
+                        >
+                          <option value="-1" className="font-bold">
+                            Select Brand
                           </option>
-                        ))}
-                      </select>
+                          {brands?.map((brand, idx) => (
+                            <option key={idx} value={brand.brand_id}>
+                              {brand.brand_name}
+                            </option>
+                          ))}
+                        </select>
 
-                      <FormLabel>Select Category</FormLabel>
-                      <select
-                        name="cat"
-                        id="cat"
-                        className="w-full outline-0 border rounded-lg py-2 px-1 my-2"
-                      >
-                        <option value="-1" className="font-bold">
-                          Select Category
-                        </option>
-                        {brandCategories?.map((cat, idx) => (
-                          <option key={idx} value={cat.brand_catid}>
-                            {cat.category_name}
+                        <FormLabel>Select Category</FormLabel>
+                        <select
+                          name="cat"
+                          id="cat"
+                          className="w-full outline-0 border rounded-lg py-2 px-1 my-2"
+                        >
+                          <option value="-1" className="font-bold">
+                            Select Category
                           </option>
-                        ))}
-                      </select>
-                      <FormField
-                        control={formItem.control}
-                        name="price"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Item Price</FormLabel>
-                            <FormControl>
-                              <Input
-                                type="number"
-                                min={1}
-                                step={0.1}
-                                defaultValue={0}
-                                placeholder="Item Price"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={formItem.control}
-                        name="qty"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Item Quantitiy</FormLabel>
-                            <FormControl>
-                              <Input
-                                type="number"
-                                min={1}
-                                step={1}
-                                placeholder="Item Quantity"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <Button type="submit" className="w-full self-end  mt-3">
-                        Save Item
-                      </Button>
-                      <h3 className="font-bold my-2 text-red-500">
-                        {formError}
-                      </h3>
-                    </form>
-                  </Form>
-                </div>
-              </PopoverContent>
-            </Popover>
+                          {brandCategories?.map((cat, idx) => (
+                            <option key={idx} value={cat.brand_catid}>
+                              {cat.category_name}
+                            </option>
+                          ))}
+                        </select>
+                        <FormField
+                          control={formItem.control}
+                          name="price"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Item Price</FormLabel>
+                              <FormControl>
+                                <Input
+                                  type="number"
+                                  min={1}
+                                  step={0.1}
+                                  defaultValue={0}
+                                  placeholder="Item Price"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={formItem.control}
+                          name="qty"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Item Quantitiy</FormLabel>
+                              <FormControl>
+                                <Input
+                                  type="number"
+                                  min={1}
+                                  step={1}
+                                  placeholder="Item Quantity"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <Button type="submit" className="w-full self-end  mt-3">
+                          Save Item
+                        </Button>
+                        <h3 className="font-bold my-2 text-red-500">
+                          {formError}
+                        </h3>
+                      </form>
+                    </Form>
+                  </div>
+                </PopoverContent>
+              </Popover>
+            )}
           </CardTitle>
         </div>
         <div className=" pt-2 mb-3">

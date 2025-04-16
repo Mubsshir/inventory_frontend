@@ -50,31 +50,37 @@ const items = [
     title: "Dashboard",
     url: "/dashboard",
     icon: ChartArea,
+    access: "1",
   },
   {
     title: "Consumers",
     url: "/consumers",
     icon: UserCircle2,
+    access: "1",
   },
   {
     title: "Inventoy",
     url: "/inventory",
     icon: WarehouseIcon,
+    access: "1",
     submenu: [
       {
         title: "Brand Categories",
         url: "/bcategory",
         icon: StoreIcon,
+        access: "1",
       },
       {
         title: "Brands",
         url: "/brands",
         icon: SendToBack,
+        access: "1",
       },
       {
         title: "Stocks",
         url: "/stocks",
         icon: MonitorPlay,
+        access: "1",
       },
     ],
   },
@@ -82,16 +88,19 @@ const items = [
     title: "Sales",
     url: "/sale",
     icon: BadgeDollarSign,
+    access: "1",
     submenu: [
       {
         title: "Make Sale",
         url: "/add-sale",
         icon: LucideDollarSign,
+        access: "1",
       },
       {
         title: "Sales History",
         url: "/history",
         icon: HistoryIcon,
+        access: "1",
       },
     ],
   },
@@ -99,21 +108,25 @@ const items = [
     title: "Import/Export Data",
     url: "/data",
     icon: Database,
+    access: "1",
     submenu: [
       {
         title: "Import Data",
         url: "/import",
         icon: DownloadIcon,
+        access: "2",
       },
       {
         title: "Approve Import Data",
         url: "/approve",
         icon: CheckCheckIcon,
+        access: "2",
       },
       {
         title: "Export Data",
         url: "/export",
         icon: UploadCloudIcon,
+        access: "1",
       },
     ],
   },
@@ -128,7 +141,8 @@ export function AppSidebar() {
     return <Loading />;
   }
 
-  const { setIsAuth } = context;
+  console.log(items);
+  const { setIsAuth, user } = context;
   const logoutHandler = () => {
     navigate("/login");
     setIsAuth && setIsAuth(false);
@@ -160,51 +174,65 @@ export function AppSidebar() {
           <SidebarGroupLabel>Application</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => {
-                if (item.submenu) {
+              {items
+                .filter((item) =>
+                  user?.role !== "Admin" ? item.access === "1" : true
+                )
+                .map((item) => {
+                  if (item.submenu) {
+                    const filteredSubmenu = item.submenu.filter((subitem) =>
+                      user?.role !== "Admin" ? subitem.access === "1" : true
+                    );
+
+                    // Skip the whole group if no submenu items are visible
+                    if (filteredSubmenu.length === 0) return null;
+
+                    return (
+                      <Collapsible
+                        key={item.title}
+                        className="group/collapsible"
+                      >
+                        <SidebarMenuItem>
+                          <CollapsibleTrigger asChild>
+                            <SidebarMenuButton>
+                              <item.icon />
+                              <NavLink to={item.url}>
+                                <span>{item.title}</span>
+                              </NavLink>
+                              <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                            </SidebarMenuButton>
+                          </CollapsibleTrigger>
+                          <CollapsibleContent className="space-y-1 mt-1">
+                            {filteredSubmenu.map((subitem) => (
+                              <SidebarMenuSub key={subitem.title}>
+                                <SidebarMenuSubItem className="flex items-center">
+                                  <NavLink
+                                    to={item.url + subitem.url}
+                                    className="flex items-center space-x-1"
+                                  >
+                                    <subitem.icon size={18} className="mr-3" />
+                                    <span>{subitem.title}</span>
+                                  </NavLink>
+                                </SidebarMenuSubItem>
+                              </SidebarMenuSub>
+                            ))}
+                          </CollapsibleContent>
+                        </SidebarMenuItem>
+                      </Collapsible>
+                    );
+                  }
+
                   return (
-                    <Collapsible key={item.title} className="group/collapsible">
-                      <SidebarMenuItem>
-                        <CollapsibleTrigger asChild>
-                          <SidebarMenuButton>
-                            {"  "}
-                            <item.icon />
-                            <NavLink to={item.url}>
-                              <span>{item.title}</span>
-                            </NavLink>
-                            <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                          </SidebarMenuButton>
-                        </CollapsibleTrigger>
-                        <CollapsibleContent className="space-y-1 mt-1">
-                          {item.submenu.map((subitem) => (
-                            <SidebarMenuSub key={subitem.title}>
-                              <SidebarMenuSubItem className="flex items-center">
-                                <NavLink
-                                  to={item.url + subitem.url}
-                                  className={"flex items-center space-x-1 "}
-                                >
-                                  <subitem.icon size={18} className="mr-3" />
-                                  <span>{subitem.title}</span>
-                                </NavLink>
-                              </SidebarMenuSubItem>
-                            </SidebarMenuSub>
-                          ))}
-                        </CollapsibleContent>
-                      </SidebarMenuItem>
-                    </Collapsible>
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton asChild>
+                        <NavLink to={item.url}>
+                          <item.icon className="mr-2" />
+                          <span>{item.title}</span>
+                        </NavLink>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
                   );
-                }
-                return (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild>
-                      <NavLink to={item.url}>
-                        <item.icon className="mr-2" />
-                        <span>{item.title}</span>
-                      </NavLink>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
+                })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

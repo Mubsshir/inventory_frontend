@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { isUserAuthorized } from "@/services/Authentication";
+import { getRoles, isUserAuthorized } from "@/services/Authentication";
 import { getConsumerList } from "@/services/Customers";
 import { getBrandCategory, getBrands, getPartList } from "@/services/Inventory";
 import { Item } from "@/components/pages/inventory/columns";
@@ -23,6 +23,7 @@ type StoreTypes = {
   brands: Brand[] | undefined;
   setBrands: React.Dispatch<React.SetStateAction<Brand[] | undefined>>;
   parts: Item[] | undefined;
+  roles: UserRole[] | undefined;
   fetchParts: Function;
   setParts: React.Dispatch<Item[]>;
   fetchBrandCategory: Function;
@@ -34,6 +35,12 @@ export type userData = {
   userId: number;
   email: string;
   fullname: string;
+  ActiveSince: string;
+};
+
+export type UserRole = {
+  role_id: string;
+  role_name: string;
 };
 
 export type Customer = {
@@ -70,6 +77,7 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
     BrandCategory[] | undefined
   >(undefined);
   const [brands, setBrands] = useState<Brand[] | undefined>(undefined);
+  const [roles, setRoles] = useState<UserRole[] | undefined>(undefined);
   const [parts, setParts] = useState<Item[]>();
   const navigate = useNavigate();
 
@@ -145,6 +153,25 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, []);
 
+  const fetchRoles = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const response = await getRoles();
+      console.log(response);
+      if (response && response.status === "success") {
+        setRoles(response.data as UserRole[]);
+      } else if (response && response.status === "401") {
+        setIsAuth(false);
+        navigate("/login");
+        setError(response.message || "");
+      }
+      setIsLoading(false);
+    } catch (err: any) {
+      setError(err.message);
+      setIsLoading(false);
+    }
+  }, []);
+
   const fetchParts = useCallback(async (catID: Number) => {
     try {
       const res = await getPartList(catID);
@@ -169,8 +196,9 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
       fetchBrandCategory();
       fetchBrands();
       fetchParts(-1);
+      fetchRoles();
     }
-  }, [fetchBrandCategory, fetchBrands, isAuth, fetchParts]);
+  }, [fetchBrandCategory, fetchRoles, fetchBrands, isAuth, fetchParts]);
 
   return (
     <Store.Provider
@@ -194,6 +222,7 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
         parts,
         fetchParts,
         setParts,
+        roles,
       }}
     >
       {children}

@@ -43,7 +43,6 @@ export const saveNewCategory = async (
     });
     const data = await res.json();
 
-    console.log(res.status);
     if (res.ok) {
       return { status: data.status, message: data.message };
     }
@@ -64,7 +63,6 @@ export const saveNewItem = async (
     });
     const data = await res.json();
 
-    console.log(res.status);
     if (res.ok) {
       return { status: data.status, message: data.message };
     }
@@ -85,7 +83,6 @@ export const saveNewBrand = async (
     });
     const data = await res.json();
 
-    console.log(res.status);
     if (res.ok) {
       return { status: data.status, message: data.message };
     }
@@ -128,7 +125,6 @@ export const getPartList = async (
         item_count: data.data[0],
       };
     }
-    console.log(data);
     return { status: "error", data: undefined, message: "Somthing went wrong" };
   } catch (err) {
     return { status: "error", data: undefined, message: err };
@@ -168,7 +164,6 @@ export const getPartBySearch = async (
         data: data.data,
       };
     }
-    console.log(data);
     return { status: "error", data: undefined, message: "Somthing went wrong" };
   } catch (err) {
     return { status: "error", data: undefined, message: err };

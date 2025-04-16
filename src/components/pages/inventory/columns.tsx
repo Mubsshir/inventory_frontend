@@ -7,7 +7,8 @@ import {
   PopoverContent,
 } from "@radix-ui/react-popover";
 import UpdateItem from "./update-item";
-import { useState } from "react";
+import { Store } from "@/store/Store";
+import { useContext, useState } from "react";
 
 export type Item = {
   part_id: number;
@@ -88,23 +89,33 @@ export const columns: ColumnDef<Item | any>[] = [
       const part_id = parseInt(row.getValue("part_id"));
       const [openUpdate, setOpenUpdate] = useState(false);
 
+      const context = useContext(Store);
+      if (!context) {
+        return <></>;
+      }
+
+      const { user } = context;
       const closePop = () => {
         setOpenUpdate(false);
       };
       return (
-        <Popover open={openUpdate} onOpenChange={setOpenUpdate}>
-          <PopoverTrigger>...</PopoverTrigger>
-          <PopoverContent className="-translate-x-10 z-40">
-            <UpdateItem
-              closeDialog={() => {
-                closePop();
-              }}
-              price={price}
-              qty={qty}
-              part_id={part_id}
-            />
-          </PopoverContent>
-        </Popover>
+        <>
+          {user?.role == "Admin" && (
+            <Popover open={openUpdate} onOpenChange={setOpenUpdate}>
+              <PopoverTrigger>...</PopoverTrigger>
+              <PopoverContent className="-translate-x-10 z-40">
+                <UpdateItem
+                  closeDialog={() => {
+                    closePop();
+                  }}
+                  price={price}
+                  qty={qty}
+                  part_id={part_id}
+                />
+              </PopoverContent>
+            </Popover>
+          )}
+        </>
       );
     },
   },

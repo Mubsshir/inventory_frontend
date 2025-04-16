@@ -13,6 +13,12 @@ type AuthResponse = {
   userData?: userData;
 };
 
+type Response = {
+  status: string;
+  message?: string;
+  data?: Object;
+};
+
 type LoginPayload = {
   user: string;
   pass: string;
@@ -44,7 +50,24 @@ export const authenticateUser = async (
       return { status: "401", message: "Unauthorized, Please login again." };
     }
   } catch (err) {
-    return { status: "401", message:"Somthing went wrong"};
+    return { status: "401", message: "Somthing went wrong" };
+  }
+};
+
+export const checkUserNameAvalability = async (
+  username: string
+): Promise<AuthResponse> => {
+  try {
+    const payload = { user_name: username }; // keyname cannot be changed as server expects key name like this only
+    const res = await fetch(`${BACK_API}/checkUsername`, {
+      method: "POST",
+      headers: { ...getHeaders(), "Content-type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    return { status: "401", message: "Somthing went wrong" };
   }
 };
 
@@ -61,6 +84,7 @@ export const isUserAuthorized = async (): Promise<AuthResponse> => {
 
     if (res.ok) {
       const data = await res.json();
+
       return {
         status: "success",
         message: "Authorization Success",
@@ -98,5 +122,55 @@ export const logoutUser = async (): Promise<AuthResponse> => {
       status: "error",
       message: err instanceof Error ? err.message : "Unknown error",
     };
+  }
+};
+
+export const getRoles = async (): Promise<Response> => {
+  try {
+    const res = await fetch(BACK_API + "/roles", {
+      method: "GET",
+      headers: getHeaders(),
+    });
+    const data = await res.json();
+    if (res.ok) {
+      return { status: data.status, data: data.data };
+    }
+    return { status: "error", data: undefined, message: "Somthing went wrong" };
+  } catch (err) {
+    return { status: "error", data: undefined, message: err as string };
+  }
+};
+
+export const getMenus = async (): Promise<Response> => {
+  try {
+    const res = await fetch(BACK_API + "/menus", {
+      method: "GET",
+      headers: getHeaders(),
+    });
+    const data = await res.json();
+    if (res.ok) {
+      return { status: data.status, data: data.data };
+    }
+    return { status: "error", data: undefined, message: "Somthing went wrong" };
+  } catch (err) {
+    return { status: "error", data: undefined, message: err as string };
+  }
+};
+
+export const saveNewUser = async (userdata: Object): Promise<Response> => {
+  try {
+    const res = await fetch(`${BACK_API}/saveUser`, {
+      method: "POST",
+      headers: { ...getHeaders(), "Content-type": "application/json" },
+      body: JSON.stringify(userdata),
+    });
+    const data = await res.json();
+    console.log(data)
+    if (res.ok) {
+      return { status: data.status, message: data.message };
+    }
+    return { status: "error", data: undefined, message: "Somthing went wrong" };
+  } catch (err) {
+    return { status: "error", data: undefined, message: err as string };
   }
 };

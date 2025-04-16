@@ -10,6 +10,8 @@ import Consumer from "./components/pages/consumer/page";
 import Inventory from "./components/pages/inventory/page";
 import Data from "./components/pages/dataupload/page";
 import Sale from "./components/pages/sales/page";
+import ProfileCard from "./components/pages/Account/page";
+import UserCreationForm from "./components/pages/Account/usercreation";
 
 function App() {
   const context = useContext(Store);
@@ -18,7 +20,7 @@ function App() {
   }
 
   const { isAuth, isLoading } = context;
-  
+
   if (isLoading) {
     return <Loading />;
   }
@@ -34,8 +36,11 @@ function App() {
         }
       >
         <Route index element={<Navigate to="dashboard" />} />
+        <Route path="usercreation" element={<UserCreationForm />} />
+        <Route path="info" element={<ProfileCard />} />
         {/* Redirect to dashboard */}
         <Route path="dashboard" element={<Dashboard />} />
+
         <Route path="consumers" element={<Consumer />} />
         <Route path="inventory" element={<Inventory />}>
           <Route element={<Navigate to="/bcategory" />} />
