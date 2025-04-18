@@ -21,7 +21,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { authenticateUser } from "@/services/Authentication";
+import { postSignInRequest } from "@/services/Authentication";
 import { Store } from "@/store/Store";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
@@ -65,7 +65,10 @@ const Login = () => {
 
     while (attempt <= maxAttempts) {
       try {
-        const result = await authenticateUser(values.username, values.password);
+        const result = await postSignInRequest(
+          values.username,
+          values.password
+        );
 
         if (result.status === "success") {
           setIsAuth && setIsAuth(true);
@@ -73,7 +76,7 @@ const Login = () => {
           navigate("/");
           return;
         }
-
+        setIsAuth && setIsAuth(false);
         // failed attempt
         setError(`Attempt ${attempt} failed: ${result.message}`);
       } catch (err) {

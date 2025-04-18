@@ -19,6 +19,7 @@ const SalesHistory = () => {
   const [recentOrder, setRecentOrder] = useState<OrderDetail[]>([]);
   const [filteredOrders, setFilteredOrders] = useState<OrderDetail[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [openInvoice, setOpenInvoice] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<OrderDetail>({
     OrderID: "",
     OrderDate: "",
@@ -66,6 +67,7 @@ const SalesHistory = () => {
 
   const handleRowClick = (order: OrderDetail) => {
     setSelectedOrder(order);
+    setOpenInvoice(true);
   };
 
   const columns: ColumnDef<OrderDetail>[] = [
@@ -140,7 +142,7 @@ const SalesHistory = () => {
               </Card>
             ))}
           </div>
-        ) : orderData? (
+        ) : orderData ? (
           <>
             <Input
               type="text"
@@ -156,15 +158,17 @@ const SalesHistory = () => {
               onRowClick={handleRowClick}
             />
           </>
-        ):<h3>No History Found</h3>}
+        ) : (
+          <h3>No History Found</h3>
+        )}
       </div>
 
-      {selectedOrder.OrderID !== "" && !loading && (
+      {selectedOrder.OrderID !== "" && openInvoice && (
         <SaleDetails
           orderDtl={selectedOrder}
           orderData={orderData || []}
           onClose={() => {
-            setLoading(true);
+            setOpenInvoice(false);
           }}
         />
       )}

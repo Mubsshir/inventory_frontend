@@ -84,15 +84,19 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
   const checkAuth = useCallback(async () => {
     try {
       setIsLoading(true);
+      console.log("Authenting User");
       const response = await isUserAuthorized();
       if (response && response.status === "success") {
         setIsAuth(true);
         setUser(response.userData); // Assuming response.data is of type userData
       } else if (response && response.status === "401") {
-        navigate("/login");
+        setIsLoading(false);
         setIsAuth(false);
         setError(response.message);
+        console.log("Authenting Completed");
+        return;
       }
+      console.log("Authenting Completed");
       setIsLoading(false);
     } catch (err: any) {
       // Ensure that err is typed correctly
@@ -157,7 +161,7 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       setIsLoading(true);
       const response = await getRoles();
-      console.log(response);
+
       if (response && response.status === "success") {
         setRoles(response.data as UserRole[]);
       } else if (response && response.status === "401") {

@@ -132,7 +132,7 @@ const items = [
   },
 ];
 
-export function AppSidebar() {
+const AppSidebar = () => {
   const { state, setOpen } = useSidebar();
   const navigate = useNavigate();
   const context = useContext(Store);
@@ -141,7 +141,6 @@ export function AppSidebar() {
     return <Loading />;
   }
 
-  console.log(items);
   const { setIsAuth, user } = context;
   const logoutHandler = () => {
     navigate("/login");
@@ -245,4 +244,5 @@ export function AppSidebar() {
       </SidebarFooter>
     </Sidebar>
   );
-}
+};
+export default AppSidebar;

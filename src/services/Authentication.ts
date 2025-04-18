@@ -24,11 +24,44 @@ type LoginPayload = {
   pass: string;
 };
 
+export const postSignInRequest = async (
+  username: string,
+  password: string
+): Promise<AuthResponse> => {
+  try {
+    const payload: LoginPayload = { user: username, pass: password }; // keyname cannot be changed as server expects key name like this only
+    const res = await fetch(`${BACK_API}/login`, {
+      method: "POST",
+      headers: { "Content-type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json();
+    if (res.ok) {
+      if (data.status && data.status === "success") {
+        Cookies.set("token", data.token || "", { expires: 1 / 24 });
+      }
+
+      return {
+        status: data.status,
+        message: data.message,
+        userData: data.user,
+      };
+    } else {
+      return { status: "401", message: "Invalid Username or Password." };
+    }
+  } catch (err) {
+    return { status: "401", message: "Somthing went wrong" };
+  }
+};
+
 export const authenticateUser = async (
   username: string,
   password: string
 ): Promise<AuthResponse> => {
   try {
+    if (!getHeaders()) {
+      return { status: "401", message: "Unauthorized, Please login again." };
+    }
     const payload: LoginPayload = { user: username, pass: password }; // keyname cannot be changed as server expects key name like this only
     const res = await fetch(`${BACK_API}/login`, {
       method: "POST",
@@ -37,10 +70,6 @@ export const authenticateUser = async (
     });
     const data = await res.json();
     if (res.ok) {
-      if (data.status && data.status === "success") {
-        Cookies.set("token", data.token || "");
-      }
-
       return {
         status: data.status,
         message: data.message,
@@ -165,7 +194,7 @@ export const saveNewUser = async (userdata: Object): Promise<Response> => {
       body: JSON.stringify(userdata),
     });
     const data = await res.json();
-    console.log(data)
+    console.log(data);
     if (res.ok) {
       return { status: data.status, message: data.message };
     }
