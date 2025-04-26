@@ -36,11 +36,11 @@ export const postSignInRequest = async (
       body: JSON.stringify(payload),
     });
     const data = await res.json();
+    console.log(data);
     if (res.ok) {
       if (data.status && data.status === "success") {
         Cookies.set("token", data.token || "", { expires: 1 / 24 });
       }
-
       return {
         status: data.status,
         message: data.message,

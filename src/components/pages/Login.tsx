@@ -59,7 +59,7 @@ const Login = () => {
     const maxAttempts = 6;
     const delay = 2000; // 8 seconds
     let attempt = 1;
-
+    let status = "";
     setIsLoading(true);
     setError(""); // clear any previous errors
 
@@ -69,12 +69,18 @@ const Login = () => {
           values.username,
           values.password
         );
-
+        status = result.status;
         if (result.status === "success") {
           setIsAuth && setIsAuth(true);
           setUser && setUser(result.userData);
+
           navigate("/");
           return;
+        } else if (result.status === "invalid") {
+          setIsAuth && setIsAuth(false);
+          setError(result.message);
+          setIsLoading(false);
+          break;
         }
         setIsAuth && setIsAuth(false);
         // failed attempt
@@ -96,6 +102,9 @@ const Login = () => {
       }
     }
 
+    if (status == "invalid") {
+      return;
+    }
     // All attempts failed
     setIsLoading(false);
     setError(
