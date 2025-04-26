@@ -59,6 +59,7 @@ export const authenticateUser = async (
   password: string
 ): Promise<AuthResponse> => {
   try {
+    console.log(getHeaders());
     if (!getHeaders()) {
       return { status: "401", message: "Unauthorized, Please login again." };
     }
@@ -102,6 +103,10 @@ export const checkUserNameAvalability = async (
 
 export const isUserAuthorized = async (): Promise<AuthResponse> => {
   try {
+    console.log(getHeaders());
+    if (!getHeaders()) {
+      return { status: "401", message: "Unauthorized, Please login again." };
+    }
     const res = await fetch(`${BACK_API}/authenticate`, {
       method: "GET",
       headers: getHeaders(),

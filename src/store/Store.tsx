@@ -86,6 +86,7 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
       setIsLoading(true);
       console.log("Authenting User");
       const response = await isUserAuthorized();
+      console.log(response);
       if (response && response.status === "success") {
         setIsAuth(true);
         setUser(response.userData); // Assuming response.data is of type userData
