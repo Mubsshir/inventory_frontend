@@ -76,7 +76,7 @@ const Login = () => {
 
           navigate("/");
           return;
-        } else if (result.status === "invalid") {
+        } else if (result.message === "Invalid Username/Password") {
           setIsAuth && setIsAuth(false);
           setError(result.message);
           setIsLoading(false);
@@ -112,27 +112,6 @@ const Login = () => {
     );
   }
 
-  // const { setIsAuth, setUser } = context;
-  // async function onSubmit(values: z.infer<typeof formSchema>) {
-  //   try {
-  //     setIsLoading && setIsLoading(true);
-  //     const result = await authenticateUser(values.username, values.password);
-  //     console.log(result);
-  //     if (result.status === "success") {
-  //       setIsAuth && setIsAuth(true);
-  //       setUser && setUser(result.userData);
-  //       navigate("/");
-  //       return;
-  //     }
-  //     setError(result.message);
-  //     setIsLoading && setIsLoading(false);
-  //     return;
-  //   } catch (err) {
-  //     setError("Somthing Went Wrong.");
-  //     setIsLoading && setIsLoading(false);
-  //     setIsAuth && setIsAuth(true);
-  //   }
-  // }
 
   useEffect(() => {
     setTimeout(() => {
