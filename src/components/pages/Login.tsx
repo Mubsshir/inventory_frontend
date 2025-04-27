@@ -102,7 +102,7 @@ const Login = () => {
       }
     }
 
-    if (status == "invalid") {
+    if (result.message === "Invalid Username/Password") {
       return;
     }
     // All attempts failed
@@ -111,7 +111,6 @@ const Login = () => {
       `Login failed after ${maxAttempts} attempts. Please try again later.`
     );
   }
-
 
   useEffect(() => {
     setTimeout(() => {
