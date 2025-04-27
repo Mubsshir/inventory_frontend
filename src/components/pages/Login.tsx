@@ -69,7 +69,7 @@ const Login = () => {
           values.username,
           values.password
         );
-        status = result.status;
+        status = result.message;
         if (result.status === "success") {
           setIsAuth && setIsAuth(true);
           setUser && setUser(result.userData);
@@ -102,7 +102,7 @@ const Login = () => {
       }
     }
 
-    if (result.message === "Invalid Username/Password") {
+    if (status === "Invalid Username/Password") {
       return;
     }
     // All attempts failed
