@@ -36,7 +36,7 @@ const UploadDetails: React.FC<{
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-start z-50 p-4">
       <div className="w-full max-w-4xl bg-white dark:bg-gray-900 shadow-xl rounded-lg p-6 transform translate-y-0 transition-transform animate-slideDown">
         <div className="flex justify-between items-center border-b pb-4 mb-4">
-          <h2 className="text-2xl font-bold text-red-600">Invoice</h2>
+          <h2 className="text-2xl font-bold text-red-600">Uploaded Data</h2>
           <button
             onClick={onClose}
             className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 transition"
