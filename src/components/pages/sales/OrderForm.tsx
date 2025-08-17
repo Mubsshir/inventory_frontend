@@ -48,7 +48,7 @@ const OrderForm: React.FC<{
       items: cartItems,
       cartValue,
     };
-    console.log(orderData);
+
     const res = await saveOrder(orderData);
     console.log(res);
     if (res?.status == "success") {
@@ -56,7 +56,14 @@ const OrderForm: React.FC<{
         title: "Success",
         description: "Order Created Successfully",
       });
-    } else {
+    }
+    else if  (res?.status == "fail") {
+      toast({
+        title: "Fail",
+        description: res.message||"Somthing went wrong",
+      });
+    } 
+    else {
       toast({
         title: "Error",
         description: "Somthing went wrong",

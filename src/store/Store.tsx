@@ -84,7 +84,7 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
   const checkAuth = useCallback(async () => {
     try {
       setIsLoading(true);
-      console.log("Authenting User");
+      console.log("Authenticating User");
       const response = await isUserAuthorized();
       console.log(response);
       if (response && response.status === "success") {

@@ -62,8 +62,9 @@ export const saveOrder = async (
     });
 
     const data = await res.json();
+    console.log(data)
     if (res.ok) {
-      return { status: data.status, data: data.data };
+      return { status: data.status, data: data.data ,message:data.message};
     }
     return { status: "error", data: undefined, message: data.message };
   } catch (err) {

@@ -201,7 +201,7 @@ const TableRow: FC<{
           type="number"
           className="w-full text-right border focus:border-red-300 rounded-lg outline-none p-2"
           min={0}
-          max={selectedItem?.item_in_stock || 10}
+          max={selectedItem?.item_in_stock }
           disabled={false}
         />
         <h2 className="text-right pr-3 w-full">PCs</h2>

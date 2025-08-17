@@ -10,7 +10,10 @@ function App() {
   if (!context) return <Loading />;
 
   const { isAuth, isLoading } = context;
+  console.log(isAuth)
   if (isLoading) return <Loading />;
+
+
 
   if (isAuth) return <MainPage isAuth={isAuth || false} />;
   else return <Login />;
