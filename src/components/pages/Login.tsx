@@ -140,14 +140,14 @@ const Login = () => {
         <div className="w-full md:w-1/2 md:p-8 sm:p-2 flex flex-col justify-center items-center">
           {}
           <h2 className="md:text-3xl text-xl mb-5 font-extralight">
-            <span className="font-extrabold text-red-500">Inventory</span>{" "}
-            Mangement System
+            <span className="font-extrabold text-red-500">Retail Inventory</span>{" "}
+            Management System
           </h2>
           <Card className="w-full max-w-md">
             <CardHeader>
               <CardTitle className="text-left">
                 Welcome to{" "}
-                <span className="text-red-500">Inventory Manger</span>
+                <span className="text-red-500">Inventory Management System</span>
               </CardTitle>
               <CardDescription>
                 Please enter your <strong>Username</strong> and{" "}
